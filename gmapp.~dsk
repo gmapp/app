@@ -3,17 +3,31 @@ File_0=TSourceModule,'c:\program files\embarcadero\rad studio\10.0\SOURCE\RTL\SY
 File_1=TSourceModule,'C:\workspace\Samples\Delphi\Database\TextData\TextMain.pas',0,1,1,1,1,0,0,,
 
 [Modules]
-Module0=default.htm
-Count=1
+Module0=C:\workspace\gmapp\trunk\MainUnit.pas
+Module1=C:\workspace\gmapp\trunk\PloshadUnit.pas
+Module2=default.htm
+Count=3
 EditWindowCount=1
+
+[C:\workspace\gmapp\trunk\MainUnit.pas]
+ModuleType=TSourceModule
+FormState=1
+FormOnTop=0
+
+[C:\workspace\gmapp\trunk\PloshadUnit.pas]
+ModuleType=TSourceModule
+FormState=1
+FormOnTop=0
 
 [default.htm]
 ModuleType=TURLModule
 
 [EditWindow0]
-ViewCount=1
-CurrentView=0
+ViewCount=3
+CurrentEditView=C:\workspace\gmapp\trunk\MainUnit.pas
 View0=0
+View1=1
+View2=2
 PercentageSizes=1
 Create=1
 Visible=1
@@ -46,6 +60,28 @@ BottomMiddelPanelData=0000080001020200000009000000446F636B5369746530100000004772
 [View0]
 CustomEditViewType=TWelcomePageView
 WelcomePageURL=bds:/default.htm
+
+[View1]
+CustomEditViewType=TEditView
+Module=C:\workspace\gmapp\trunk\PloshadUnit.pas
+CursorX=1
+CursorY=1
+TopLine=1
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=Borland.FormDesignerView
+
+[View2]
+CustomEditViewType=TEditView
+Module=C:\workspace\gmapp\trunk\MainUnit.pas
+CursorX=29
+CursorY=112
+TopLine=92
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=C:\workspace\gmapp\trunk\MainUnit.pas
 
 [Watches]
 Count=0
@@ -300,6 +336,11 @@ LRDockWidth=1896
 Dockable=1
 StayOnTop=0
 SplitPos=111
+
+[PropInspDesignerSelection]
+ArrangeBy=Name
+SelectedItem=User,
+ExpandedItems=
 
 [TFileExplorerForm]
 PercentageSizes=1
