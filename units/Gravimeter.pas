@@ -1,4 +1,4 @@
-unit PloshadUnit;
+unit Gravimeter;
 
 interface
 
@@ -7,11 +7,9 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls;
 
 type
-  TFormPloshad = class(TForm)
+  TFormGravimeter = class(TForm)
     leName: TLabeledEdit;
     LabeledEdit1: TLabeledEdit;
-    LabeledEdit2: TLabeledEdit;
-    LabeledEdit3: TLabeledEdit;
     Button1: TButton;
     Button2: TButton;
   private
@@ -21,7 +19,7 @@ type
   end;
 
 var
-  FormPloshad: TFormPloshad;
+  FormGravimeter: TFormGravimeter;
 
 implementation
 

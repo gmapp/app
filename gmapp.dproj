@@ -73,8 +73,8 @@
         <Debugger_CWD>C:\workspace\gmapp\trunk</Debugger_CWD>
         <Debugger_DebugSourcePath>C:\workspace\gmapp\trunk\lib\ZEOSDBO-7.0.3-stable\src\dbc;C:\workspace\gmapp\trunk\lib\ZEOSDBO-7.0.3-stable\src\core;C:\workspace\gmapp\trunk\lib\ZEOSDBO-7.0.3-stable\src\component;C:\workspace\gmapp\trunk\lib\ZEOSDBO-7.0.3-stable\src\parsesql;C:\workspace\gmapp\trunk\lib\ZEOSDBO-7.0.3-stable\src\plain;$(Debugger_DebugSourcePath)</Debugger_DebugSourcePath>
         <DCC_UnitSearchPath>C:\workspace\gmapp\trunk\lib\ZEOSDBO-7.0.3-stable\packages\DelphiXE3\Win32\Debug;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.20;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <VerInfo_Build>20</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.43;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Build>43</VerInfo_Build>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
@@ -99,7 +99,28 @@
         <DCCReference Include="units\PloshadUnit.pas">
             <Form>FormPloshad</Form>
         </DCCReference>
+        <DCCReference Include="units\Gravimeter.pas">
+            <Form>FormGravimeter</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="units\Input.pas">
+            <Form>FormInput</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="units\frameProtocol.pas">
+            <Form>ProtocolFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="units\Protocol.pas">
+            <Form>FormProtocol</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <None Include="units\MainUnit.vlb"/>
+        <None Include="fbclient.dll"/>
+        <None Include="firebird.msg"/>
+        <None Include="icudt30.dll"/>
+        <None Include="icuuc30.dll"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -161,8 +182,10 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment>
-                <DeployFile LocalName="Win32\Debug\gmapp.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32"/>
+                <DeployFile LocalName="Win32\Debug\gmapp.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win32">
+                        <RemoteName>gmapp.rsm</RemoteName>
+                    </Platform>
                 </DeployFile>
                 <DeployFile LocalName="fbclient.dll" Class="File">
                     <Platform Name="Win64">
@@ -196,10 +219,8 @@
                         <RemoteName>icudt30.dll</RemoteName>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\gmapp.rsm" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="Win32">
-                        <RemoteName>gmapp.rsm</RemoteName>
-                    </Platform>
+                <DeployFile LocalName="Win32\Debug\gmapp.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32"/>
                 </DeployFile>
                 <DeployClass Required="true" Name="DependencyPackage">
                     <Platform Name="iOSDevice">

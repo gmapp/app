@@ -37,7 +37,7 @@ type
     Button1: TButton;
     procedure N1Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
+    procedure N14Click(Sender: TObject);
   private
     procedure loadFile(filename: String);
   public
@@ -51,7 +51,12 @@ implementation
 
 {$R *.dfm}
 
-uses PloshadUnit,System.StrUtils, Database;
+uses PloshadUnit,System.StrUtils, Database, Protocol;
+
+procedure TFormMain.N14Click(Sender: TObject);
+begin
+  FormProtocol.ShowModal;
+end;
 
 procedure TFormMain.N1Click(Sender: TObject);
 begin
@@ -73,31 +78,93 @@ begin
   end;
 end;
 
-procedure TFormMain.Button1Click(Sender: TObject);
-begin
-  FormDatabase.test;
-end;
+function StringToDate(str: String): TDate;
+	var
+		//FormatSettings: TFormatSettings;
+    sl:TStringList;
+    d: TDate;
+    myYear, myMonth, myDay : Word;
+	begin
+    sl := TStringList.Create;
+    try
+      sl.Delimiter     := '/';
+      sl.DelimitedText := str;
+      myYear:=StrToInt(sl.Strings[0]);
+      myMonth:=StrToInt(sl.Strings[1]);
+      myDay:=StrToInt(sl.Strings[2]);
+      d:=EncodeDate(myYear, myMonth, myDay);
+      Result:=d;
+    finally
+      FreeAndNil(sl);
+    end;
+		{GetLocaleFormatSettings(SysLocale.DefaultLCID, FormatSettings);
+		FormatSettings.ShortDateFormat := 'yyyy/mm/d';
+		FormatSettings.TimeSeparator := ':';
+		Result := StrToDate(str, FormatSettings);}
+	end;
 
 procedure TFormMain.loadFile(filename: String);
 var
   myFile : TextFile;
-  text   : string;
+  text, tmp : string;
   pwc: PWideChar;
+  arr: array of TVarRec;
+  list:TStringList;
+  i, amount, p: Integer;
+  protocolDate: TDate;
 begin
   AssignFile(myFile, filename);
   Reset(myFile);
+  list := TStringList.create;
+  list.StrictDelimiter := false;
+  list.Delimiter := #9; //TAB
+  amount:=0;
   try
+    FormDatabase.ZTableProtocol.Active:=True;
     while not Eof(myFile) do
     begin
       ReadLn(myFile, text);
+
+      if (AnsiStartsStr('/', text)) then
+      begin
+        p:=Pos('Date:', text);
+        if (p>0) then
+        begin
+          tmp:=Copy(text, p+6);
+          tmp:=Trim(tmp);
+          tmp:=ReplaceStr(tmp,#9,'');
+          //tmp:=ReplaceStr(tmp,' ','');
+          protocolDate:=StringToDate(tmp);
+        end;
+
+      end;
+
       if (Length(text)>0) AND Not AnsiStartsStr('/', text) then
       begin
         pwc:=StringToOleStr(text);
         OutputDebugString(pwc);
+
+        text:=ReplaceStr(text,'.',',');
+
+        list.DelimitedText:=text;
+
+        if list.Count<4 then continue;
+
+        Setlength(arr, list.Count+1);
+        arr[0].VInteger:=0;
+        for i := 0 to list.Count-1 do
+          arr[i+1].VAnsiString:=PAnsiString(list[i]);
+        //FormDatabase.ZTable1.InsertRecord(arr);
+        //FormDatabase.ZTable1.AppendRecord(arr);
+        FormDatabase.insertProtocolRecord(protocolDate, list);
+        INC(amount);
       end;
+      //FormDatabase.ZTableProtocol.ApplyUpdates;
     end;
+    ShowMessage('Загрузка выполнена: '+IntToStr(amount));
   finally
     CloseFile(myFile);
+    FreeAndNil(list);
   end;
 end;
 

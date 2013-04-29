@@ -1,4 +1,4 @@
-unit PloshadUnit;
+unit Input;
 
 interface
 
@@ -7,13 +7,13 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls;
 
 type
-  TFormPloshad = class(TForm)
+  TFormInput = class(TForm)
+    Button1: TButton;
+    Button2: TButton;
     leName: TLabeledEdit;
     LabeledEdit1: TLabeledEdit;
     LabeledEdit2: TLabeledEdit;
     LabeledEdit3: TLabeledEdit;
-    Button1: TButton;
-    Button2: TButton;
   private
     { Private declarations }
   public
@@ -21,7 +21,7 @@ type
   end;
 
 var
-  FormPloshad: TFormPloshad;
+  FormInput: TFormInput;
 
 implementation
 

@@ -34,4 +34,57 @@ object FormDatabase: TFormDatabase
     Left = 152
     Top = 48
   end
+  object ZTableProtocol: TZTable
+    Connection = ZConnection1
+    TableName = 'PROTOCOL'
+    Left = 312
+    Top = 96
+    object ZTableProtocolID: TIntegerField
+      FieldName = 'ID'
+      Required = True
+    end
+    object ZTableProtocolLINE: TFloatField
+      FieldName = 'LINE'
+    end
+    object ZTableProtocolSTATION: TFloatField
+      FieldName = 'STATION'
+    end
+    object ZTableProtocolALT: TFloatField
+      FieldName = 'ALT'
+    end
+    object ZTableProtocolGRAV: TFloatField
+      FieldName = 'GRAV'
+    end
+    object ZTableProtocolSD: TFloatField
+      FieldName = 'SD'
+    end
+    object ZTableProtocolTILTX: TFloatField
+      FieldName = 'TILTX'
+    end
+    object ZTableProtocolTILTY: TFloatField
+      FieldName = 'TILTY'
+    end
+    object ZTableProtocolTEMP: TFloatField
+      FieldName = 'TEMP'
+    end
+    object ZTableProtocolTIDE: TFloatField
+      FieldName = 'TIDE'
+    end
+    object ZTableProtocolDUR: TFloatField
+      FieldName = 'DUR'
+    end
+    object ZTableProtocolREJ: TFloatField
+      FieldName = 'REJ'
+    end
+    object ZTableProtocolSTR_TIME: TWideStringField
+      FieldName = 'STR_TIME'
+      Size = 30
+    end
+    object ZTableProtocolDEC_TIME: TFloatField
+      FieldName = 'DEC_TIME'
+    end
+    object ZTableProtocolTERRAIN: TFloatField
+      FieldName = 'TERRAIN'
+    end
+  end
 end

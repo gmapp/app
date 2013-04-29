@@ -10,15 +10,22 @@ uses
   Vcl.Forms,
   Database in 'units\Database.pas' {FormDatabase},
   MainUnit in 'units\MainUnit.pas' {FormMain},
-  PloshadUnit in 'units\PloshadUnit.pas' {FormPloshad};
+  PloshadUnit in 'units\PloshadUnit.pas' {FormPloshad},
+  Gravimeter in 'units\Gravimeter.pas' {FormGravimeter},
+  Input in 'units\Input.pas' {FormInput},
+  frameProtocol in 'units\frameProtocol.pas' {ProtocolFrame: TFrame},
+  Protocol in 'units\Protocol.pas' {FormProtocol};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TFormDatabase, FormDatabase);
   Application.CreateForm(TFormMain, FormMain);
+  Application.CreateForm(TFormDatabase, FormDatabase);
   Application.CreateForm(TFormPloshad, FormPloshad);
+  Application.CreateForm(TFormGravimeter, FormGravimeter);
+  Application.CreateForm(TFormInput, FormInput);
+  Application.CreateForm(TFormProtocol, FormProtocol);
   Application.Run;
 end.

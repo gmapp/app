@@ -1,20 +1,67 @@
 ﻿[Closed Files]
-File_0=TSourceModule,'c:\program files\embarcadero\rad studio\10.0\SOURCE\RTL\SYS\System.pas',0,1,30674,1,30688,0,0,,
-File_1=TSourceModule,'C:\workspace\Samples\Delphi\Database\TextData\TextMain.pas',0,1,1,1,1,0,0,,
+File_0=TSourceModule,'c:\program files\embarcadero\rad studio\10.0\source\data\Data.DB.pas',0,1,11583,1,11600,0,0,,
+File_1=TSourceModule,'c:\program files\embarcadero\rad studio\10.0\SOURCE\RTL\SYS\System.Variants.pas',0,1,3428,1,3448,0,0,,
+File_2=TSourceModule,'c:\program files\embarcadero\rad studio\10.0\source\rtl\common\System.Classes.pas',0,1,6645,1,6659,0,0,,
+File_3=TSourceModule,'c:\program files\embarcadero\rad studio\10.0\SOURCE\RTL\SYS\System.pas',0,1,18560,1,18575,0,0,,
+File_4=TSourceModule,'C:\workspace\gmapp\trunk\lib\ZEOSDBO-7.0.3-stable\src\component\ZAbstractRODataset.pas',0,1,2819,27,2842,0,0,,
+File_5=TSourceModule,'C:\workspace\gmapp\trunk\fbclient.dll',0,1,1,1,1,0,0,,
+File_6=TSourceModule,'C:\workspace\gmapp\trunk\units\PloshadUnit.dfm',0,1,1,1,1,0,0,,
+File_7=TSourceModule,'C:\workspace\gmapp\trunk\units\MainUnit.dfm',0,1,1,1,1,0,0,,
+File_8=TSourceModule,'C:\workspace\gmapp\trunk\units\Database.dfm',0,1,1,1,1,0,0,,
+File_9=TSourceModule,'C:\workspace\gmapp\trunk\PloshadUnit.pas',0,1,1,1,1,0,0,,
+File_10=TSourceModule,'C:\workspace\gmapp\trunk\MainUnit.pas',0,1,76,42,91,0,0,,
+File_11=TSourceModule,'C:\workspace\gmapp\trunk\Database.pas',0,1,49,1,56,0,0,,
+File_12=TSourceModule,'C:\workspace\Samples\Delphi\Database\TextData\TextMain.pas',0,1,1,1,1,0,0,,
 
 [Modules]
-Module0=C:\workspace\gmapp\trunk\MainUnit.pas
-Module1=C:\workspace\gmapp\trunk\PloshadUnit.pas
-Module2=default.htm
-Count=3
+Module0=C:\workspace\gmapp\trunk\units\Database.pas
+Module1=C:\workspace\gmapp\trunk\units\MainUnit.pas
+Module2=C:\workspace\gmapp\trunk\lib\ZEOSDBO-7.0.3-stable\src\dbc\ZDbcInterbase6Utils.pas
+Module3=C:\workspace\gmapp\trunk\units\Protocol.pas
+Module4=C:\workspace\gmapp\trunk\units\frameProtocol.pas
+Module5=C:\workspace\gmapp\trunk\units\Input.pas
+Module6=C:\workspace\gmapp\trunk\units\PloshadUnit.pas
+Module7=C:\workspace\gmapp\trunk\units\Gravimeter.pas
+Module8=default.htm
+Count=9
 EditWindowCount=1
 
-[C:\workspace\gmapp\trunk\MainUnit.pas]
+[C:\workspace\gmapp\trunk\units\Database.pas]
+ModuleType=TSourceModule
+FormState=1
+FormOnTop=1
+
+[C:\workspace\gmapp\trunk\units\MainUnit.pas]
 ModuleType=TSourceModule
 FormState=1
 FormOnTop=0
 
-[C:\workspace\gmapp\trunk\PloshadUnit.pas]
+[C:\workspace\gmapp\trunk\lib\ZEOSDBO-7.0.3-stable\src\dbc\ZDbcInterbase6Utils.pas]
+ModuleType=TSourceModule
+FormState=0
+FormOnTop=0
+
+[C:\workspace\gmapp\trunk\units\Protocol.pas]
+ModuleType=TSourceModule
+FormState=1
+FormOnTop=0
+
+[C:\workspace\gmapp\trunk\units\frameProtocol.pas]
+ModuleType=TSourceModule
+FormState=1
+FormOnTop=0
+
+[C:\workspace\gmapp\trunk\units\Input.pas]
+ModuleType=TSourceModule
+FormState=1
+FormOnTop=0
+
+[C:\workspace\gmapp\trunk\units\PloshadUnit.pas]
+ModuleType=TSourceModule
+FormState=1
+FormOnTop=0
+
+[C:\workspace\gmapp\trunk\units\Gravimeter.pas]
 ModuleType=TSourceModule
 FormState=1
 FormOnTop=0
@@ -23,11 +70,17 @@ FormOnTop=0
 ModuleType=TURLModule
 
 [EditWindow0]
-ViewCount=3
-CurrentEditView=C:\workspace\gmapp\trunk\MainUnit.pas
+ViewCount=9
+CurrentEditView=C:\workspace\gmapp\trunk\units\Database.pas
 View0=0
 View1=1
 View2=2
+View3=3
+View4=4
+View5=5
+View6=6
+View7=7
+View8=8
 PercentageSizes=1
 Create=1
 Visible=1
@@ -63,9 +116,9 @@ WelcomePageURL=bds:/default.htm
 
 [View1]
 CustomEditViewType=TEditView
-Module=C:\workspace\gmapp\trunk\PloshadUnit.pas
-CursorX=1
-CursorY=1
+Module=C:\workspace\gmapp\trunk\units\PloshadUnit.pas
+CursorX=4
+CursorY=23
 TopLine=1
 LeftCol=1
 Elisions=
@@ -74,14 +127,80 @@ EditViewName=Borland.FormDesignerView
 
 [View2]
 CustomEditViewType=TEditView
-Module=C:\workspace\gmapp\trunk\MainUnit.pas
-CursorX=29
-CursorY=112
-TopLine=92
+Module=C:\workspace\gmapp\trunk\units\Input.pas
+CursorX=1
+CursorY=30
+TopLine=30
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\workspace\gmapp\trunk\MainUnit.pas
+EditViewName=Borland.FormDesignerView
+
+[View3]
+CustomEditViewType=TEditView
+Module=C:\workspace\gmapp\trunk\units\frameProtocol.pas
+CursorX=1
+CursorY=20
+TopLine=7
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=C:\workspace\gmapp\trunk\units\frameProtocol.pas
+
+[View4]
+CustomEditViewType=TEditView
+Module=C:\workspace\gmapp\trunk\units\Protocol.pas
+CursorX=8
+CursorY=30
+TopLine=8
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=C:\workspace\gmapp\trunk\units\Protocol.pas
+
+[View5]
+CustomEditViewType=TEditView
+Module=C:\workspace\gmapp\trunk\units\Gravimeter.pas
+CursorX=1
+CursorY=28
+TopLine=28
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=Borland.FormDesignerView
+
+[View6]
+CustomEditViewType=TEditView
+Module=C:\workspace\gmapp\trunk\units\MainUnit.pas
+CursorX=37
+CursorY=110
+TopLine=98
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=C:\workspace\gmapp\trunk\units\MainUnit.pas
+
+[View7]
+CustomEditViewType=TEditView
+Module=C:\workspace\gmapp\trunk\units\Database.pas
+CursorX=1
+CursorY=129
+TopLine=106
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=Borland.FormDesignerView
+
+[View8]
+CustomEditViewType=TEditView
+Module=C:\workspace\gmapp\trunk\lib\ZEOSDBO-7.0.3-stable\src\dbc\ZDbcInterbase6Utils.pas
+CursorX=57
+CursorY=837
+TopLine=818
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=C:\workspace\gmapp\trunk\lib\ZEOSDBO-7.0.3-stable\src\dbc\ZDbcInterbase6Utils.pas
 
 [Watches]
 Count=0
@@ -108,7 +227,9 @@ Dockable=1
 StayOnTop=0
 
 [Breakpoints]
-Count=0
+Count=2
+Breakpoint0='C:\workspace\gmapp\trunk\units\Database.pas',115,'',0,1,'',1,0,0,'',1,'','','',0,''
+Breakpoint1='C:\workspace\gmapp\trunk\units\Database.pas',129,'',0,1,'',1,0,0,'',1,'','','',0,''
 
 [EmbarcaderoWin32Debugger_AddressBreakpoints]
 Count=0
@@ -339,7 +460,7 @@ SplitPos=111
 
 [PropInspDesignerSelection]
 ArrangeBy=Name
-SelectedItem=User,
+SelectedItem=Connected,
 ExpandedItems=
 
 [TFileExplorerForm]

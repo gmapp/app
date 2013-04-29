@@ -20,9 +20,8 @@ object FormMain: TFormMain
     Top = 40
     Width = 75
     Height = 25
-    Caption = 'Test database'
+    Caption = 'Test'
     TabOrder = 0
-    OnClick = Button1Click
   end
   object MainMenu1: TMainMenu
     Left = 432
@@ -75,6 +74,7 @@ object FormMain: TFormMain
       end
       object N14: TMenuItem
         Caption = #1050#1086#1085#1090#1088#1086#1083#1100
+        OnClick = N14Click
       end
       object N15: TMenuItem
         Caption = #1054#1087#1086#1088#1085#1099#1077
