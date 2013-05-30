@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>gmapp.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -51,6 +51,7 @@
         <DCC_K>false</DCC_K>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <DCC_UnitSearchPath>C:\workspace\gmapp\trunk\lib\ZEOSDBO-7.0.3-stable\packages\DelphiXE3\Win32\Debug;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
@@ -73,8 +74,8 @@
         <Debugger_CWD>C:\workspace\gmapp\trunk</Debugger_CWD>
         <Debugger_DebugSourcePath>C:\workspace\gmapp\trunk\lib\ZEOSDBO-7.0.3-stable\src\dbc;C:\workspace\gmapp\trunk\lib\ZEOSDBO-7.0.3-stable\src\core;C:\workspace\gmapp\trunk\lib\ZEOSDBO-7.0.3-stable\src\component;C:\workspace\gmapp\trunk\lib\ZEOSDBO-7.0.3-stable\src\parsesql;C:\workspace\gmapp\trunk\lib\ZEOSDBO-7.0.3-stable\src\plain;$(Debugger_DebugSourcePath)</Debugger_DebugSourcePath>
         <DCC_UnitSearchPath>C:\workspace\gmapp\trunk\lib\ZEOSDBO-7.0.3-stable\packages\DelphiXE3\Win32\Debug;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.43;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <VerInfo_Build>43</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.56;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Build>56</VerInfo_Build>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
@@ -121,6 +122,7 @@
         <None Include="firebird.msg"/>
         <None Include="icudt30.dll"/>
         <None Include="icuuc30.dll"/>
+        <None Include="intl\fbintl.dll"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -182,25 +184,12 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment>
-                <DeployFile LocalName="Win32\Debug\gmapp.rsm" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="Win32">
-                        <RemoteName>gmapp.rsm</RemoteName>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="fbclient.dll" Class="File">
                     <Platform Name="Win64">
                         <RemoteName>fbclient.dll</RemoteName>
                     </Platform>
                     <Platform Name="Win32">
                         <RemoteName>fbclient.dll</RemoteName>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="firebird.msg" Class="File">
-                    <Platform Name="Win64">
-                        <RemoteName>firebird.msg</RemoteName>
-                    </Platform>
-                    <Platform Name="Win32">
-                        <RemoteName>firebird.msg</RemoteName>
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="icuuc30.dll" Class="File">
@@ -219,8 +208,29 @@
                         <RemoteName>icudt30.dll</RemoteName>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="intl\fbintl.dll" Class="File">
+                    <Platform Name="Win64">
+                        <RemoteName>fbintl.dll</RemoteName>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <RemoteName>fbintl.dll</RemoteName>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Win32\Debug\gmapp.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win32">
+                        <RemoteName>gmapp.rsm</RemoteName>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="Win32\Debug\gmapp.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32"/>
+                </DeployFile>
+                <DeployFile LocalName="firebird.msg" Class="File">
+                    <Platform Name="Win64">
+                        <RemoteName>firebird.msg</RemoteName>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <RemoteName>firebird.msg</RemoteName>
+                    </Platform>
                 </DeployFile>
                 <DeployClass Required="true" Name="DependencyPackage">
                     <Platform Name="iOSDevice">
