@@ -13,15 +13,59 @@ object FormMain: TFormMain
   Menu = MainMenu1
   OldCreateOrder = False
   Position = poDesktopCenter
+  OnShow = FormShow
+  DesignSize = (
+    575
+    421)
   PixelsPerInch = 96
   TextHeight = 13
   object Button1: TButton
-    Left = 32
-    Top = 40
+    Left = 8
+    Top = 8
     Width = 75
     Height = 25
     Caption = 'Test'
     TabOrder = 0
+  end
+  object dbGridPloshad: TDBGrid
+    Left = 8
+    Top = 39
+    Width = 559
+    Height = 374
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    DataSource = dsPloshad
+    ReadOnly = True
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+    OnDblClick = dbGridPloshadDblClick
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'NAME'
+        Width = 100
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'REGION'
+        Width = 100
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'START_DATE'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'COMMENT'
+        Width = 200
+        Visible = True
+      end>
   end
   object MainMenu1: TMainMenu
     Left = 432
@@ -102,5 +146,32 @@ object FormMain: TFormMain
   object OpenDialog1: TOpenDialog
     Left = 392
     Top = 160
+  end
+  object dsPloshad: TDataSource
+    AutoEdit = False
+    DataSet = tblPloshad
+    Left = 240
+    Top = 328
+  end
+  object tblPloshad: TZTable
+    Connection = FormDatabase.ZConnection1
+    TableName = 'PLOSHAD'
+    Left = 400
+    Top = 304
+    object tblPloshadNAME: TWideStringField
+      FieldName = 'NAME'
+      Size = 255
+    end
+    object tblPloshadREGION: TWideStringField
+      FieldName = 'REGION'
+      Size = 255
+    end
+    object tblPloshadSTART_DATE: TDateField
+      FieldName = 'START_DATE'
+    end
+    object tblPloshadCOMMENT: TWideStringField
+      FieldName = 'COMMENT'
+      Size = 1024
+    end
   end
 end

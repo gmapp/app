@@ -12,12 +12,20 @@ object FormPloshad: TFormPloshad
   Font.Style = []
   OldCreateOrder = False
   Position = poDesktopCenter
+  OnClose = FormClose
   DesignSize = (
     333
     184)
   PixelsPerInch = 96
   TextHeight = 13
-  object leName: TLabeledEdit
+  object Label1: TLabel
+    Left = 56
+    Top = 72
+    Width = 37
+    Height = 13
+    Caption = #1053#1072#1095#1072#1083#1086
+  end
+  object edName: TLabeledEdit
     Left = 96
     Top = 16
     Width = 200
@@ -28,7 +36,7 @@ object FormPloshad: TFormPloshad
     LabelPosition = lpLeft
     TabOrder = 0
   end
-  object LabeledEdit1: TLabeledEdit
+  object edRaion: TLabeledEdit
     Left = 96
     Top = 43
     Width = 200
@@ -39,18 +47,7 @@ object FormPloshad: TFormPloshad
     LabelPosition = lpLeft
     TabOrder = 1
   end
-  object LabeledEdit2: TLabeledEdit
-    Left = 96
-    Top = 70
-    Width = 200
-    Height = 21
-    EditLabel.Width = 70
-    EditLabel.Height = 13
-    EditLabel.Caption = #1053#1072#1095#1072#1083#1086' '#1088#1072#1073#1086#1090
-    LabelPosition = lpLeft
-    TabOrder = 2
-  end
-  object LabeledEdit3: TLabeledEdit
+  object edComment: TLabeledEdit
     Left = 96
     Top = 97
     Width = 200
@@ -59,9 +56,9 @@ object FormPloshad: TFormPloshad
     EditLabel.Height = 13
     EditLabel.Caption = #1050#1086#1084#1084#1077#1085#1090#1072#1088#1080#1081
     LabelPosition = lpLeft
-    TabOrder = 3
+    TabOrder = 2
   end
-  object Button1: TButton
+  object btnOk: TButton
     Left = 161
     Top = 135
     Width = 75
@@ -69,9 +66,10 @@ object FormPloshad: TFormPloshad
     Anchors = [akRight, akBottom]
     Caption = #1054#1082
     ModalResult = 1
-    TabOrder = 4
+    TabOrder = 3
+    OnClick = btnOkClick
   end
-  object Button2: TButton
+  object btnCancel: TButton
     Left = 242
     Top = 135
     Width = 75
@@ -79,6 +77,16 @@ object FormPloshad: TFormPloshad
     Anchors = [akRight, akBottom]
     Caption = #1054#1090#1084#1077#1085#1072
     ModalResult = 2
+    TabOrder = 4
+    OnClick = btnCancelClick
+  end
+  object dtNachalo: TDateTimePicker
+    Left = 96
+    Top = 70
+    Width = 200
+    Height = 21
+    Date = 41424.335648379630000000
+    Time = 41424.335648379630000000
     TabOrder = 5
   end
 end

@@ -5,7 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, ZAbstractConnection,
-  ZConnection, Vcl.StdCtrls;
+  ZConnection, Vcl.StdCtrls, Data.DB, Vcl.Grids, Vcl.DBGrids,
+  ZAbstractRODataset, ZAbstractDataset, ZAbstractTable, ZDataset;
 
 type
   TFormMain = class(TForm)
@@ -35,9 +36,18 @@ type
     N18: TMenuItem;
     OpenDialog1: TOpenDialog;
     Button1: TButton;
+    dbGridPloshad: TDBGrid;
+    dsPloshad: TDataSource;
+    tblPloshad: TZTable;
+    tblPloshadNAME: TWideStringField;
+    tblPloshadREGION: TWideStringField;
+    tblPloshadSTART_DATE: TDateField;
+    tblPloshadCOMMENT: TWideStringField;
     procedure N1Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
     procedure N14Click(Sender: TObject);
+    procedure dbGridPloshadDblClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     procedure loadFile(filename: String);
   public
@@ -60,7 +70,7 @@ end;
 
 procedure TFormMain.N1Click(Sender: TObject);
 begin
-  FormPloshad.ShowModal;
+  FormPloshad.show(tblPloshad, true);
 end;
 
 procedure TFormMain.N2Click(Sender: TObject);
@@ -102,6 +112,23 @@ function StringToDate(str: String): TDate;
 		FormatSettings.TimeSeparator := ':';
 		Result := StrToDate(str, FormatSettings);}
 	end;
+
+procedure TFormMain.dbGridPloshadDblClick(Sender: TObject);
+begin
+  if dbGridPloshad.SelectedIndex>0 then
+  begin
+    FormPloshad.Show(tblPloshad, false)
+  end else
+  begin
+    FormPloshad.Show(tblPloshad, true);
+  end;
+  dbGridPloshad.Refresh;
+end;
+
+procedure TFormMain.FormShow(Sender: TObject);
+begin
+  tblPloshad.Open
+end;
 
 procedure TFormMain.loadFile(filename: String);
 var

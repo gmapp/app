@@ -17,7 +17,10 @@ object FormDatabase: TFormDatabase
   object ZConnection1: TZConnection
     ControlsCodePage = cCP_UTF16
     UTF8StringsAsWideField = True
+    ClientCodepage = 'WIN1251'
     Catalog = ''
+    Properties.Strings = (
+      'codepage=WIN1251')
     HostName = ''
     Port = 0
     Database = 'C:\workspace\gmapp\trunk\gmdb\GMDB.FDB'
