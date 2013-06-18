@@ -23,11 +23,10 @@ object FormDatabase: TFormDatabase
       'codepage=WIN1251')
     HostName = ''
     Port = 0
-    Database = 'C:\workspace\gmapp\trunk\gmdb\GMDB.FDB'
+    Database = ''
     User = 'GM'
     Password = ''
-    Protocol = 'firebirdd-2.5'
-    LibraryLocation = 'C:\workspace\gmapp\trunk\fbclient.dll'
+    Protocol = ''
     Left = 80
     Top = 24
   end

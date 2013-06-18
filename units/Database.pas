@@ -1,4 +1,5 @@
 unit Database;
+{$I Options.inc}
 
 interface
 
@@ -51,14 +52,27 @@ procedure TFormDatabase.initDatabase;
 var
   path: String;
 begin
+  //C:\workspace\gmapp\trunk\fbclient.dll
   //path:=ExtractFilePath(Application.ExeName);
   path:=GetCurrentDir;
   OutputDebugString(StringToOleStr('path '+path));
+  {$IFDEF DB_POSTGRESQL}
+  ZConnection1.LibraryLocation:=path+'\libpq.dll';
+  ZConnection1.Protocol:='postgresql-9';
+  ZConnection1.HostName := '127.0.0.1';
+  ZConnection1.Database := 'gmdb';
+  ZConnection1.Properties.Add('codepage=WIN1251');
+  ZConnection1.Version:='9.2';
+  ZConnection1.User:='gm';
+  ZConnection1.Password:='gm';
+  {$ELSE}
   ZConnection1.LibraryLocation:=path+'\fbclient.dll';
   ZConnection1.Database:='gmdb\GMDB.FDB';
+  //C:\workspace\gmapp\trunk\gmdb\GMDB.FDB
   ZConnection1.Protocol:='firebirdd-2.5';
   ZConnection1.User:='GM';
   ZConnection1.Password:='GM';
+  {$ENDIF}
   ZConnection1.Connect;
 end;
 
