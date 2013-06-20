@@ -22,11 +22,34 @@ object FormProtocol: TFormProtocol
     Height = 405
     Align = alClient
     TabOrder = 0
-    ExplicitLeft = 57
-    ExplicitTop = -71
+    ExplicitLeft = 73
+    ExplicitTop = 17
     inherited DBGrid1: TDBGrid
-      Width = 770
-      Height = 274
+      Width = 797
+      Height = 290
+    end
+    inherited GridPanel1: TGridPanel
+      ControlCollection = <
+        item
+          Column = 0
+          Control = ProtocolFrame1.lbl0punktCaption
+          Row = 0
+        end
+        item
+          Column = 0
+          Control = ProtocolFrame1.lblCoefCaption
+          Row = 1
+        end
+        item
+          Column = 2
+          Control = ProtocolFrame1.lbl0punkt
+          Row = 0
+        end
+        item
+          Column = 2
+          Control = ProtocolFrame1.lblCoef
+          Row = 1
+        end>
     end
   end
 end

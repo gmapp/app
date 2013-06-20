@@ -79,8 +79,8 @@
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <Debugger_CWD>C:\workspace\gmapp\trunk</Debugger_CWD>
         <Debugger_DebugSourcePath>C:\workspace\gmapp\trunk\lib\ZEOSDBO-7.0.3-stable\src\dbc;C:\workspace\gmapp\trunk\lib\ZEOSDBO-7.0.3-stable\src\core;C:\workspace\gmapp\trunk\lib\ZEOSDBO-7.0.3-stable\src\component;C:\workspace\gmapp\trunk\lib\ZEOSDBO-7.0.3-stable\src\parsesql;C:\workspace\gmapp\trunk\lib\ZEOSDBO-7.0.3-stable\src\plain;$(Debugger_DebugSourcePath)</Debugger_DebugSourcePath>
-        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.64;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <VerInfo_Build>64</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.66;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Build>66</VerInfo_Build>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
@@ -114,8 +114,8 @@
             <Form>FormGravimeter</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="units\Input.pas">
-            <Form>FormInput</Form>
+        <DCCReference Include="units\Reis.pas">
+            <Form>FormReis</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="units\frameProtocol.pas">
@@ -227,13 +227,13 @@
                         <RemoteName>fbintl.dll</RemoteName>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\gmapp.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32"/>
-                </DeployFile>
                 <DeployFile LocalName="Win32\Debug\gmapp.rsm" Configuration="Debug" Class="DebugSymbols">
                     <Platform Name="Win32">
                         <RemoteName>gmapp.rsm</RemoteName>
                     </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Win32\Debug\gmapp.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32"/>
                 </DeployFile>
                 <DeployFile LocalName="firebird.msg" Class="File">
                     <Platform Name="Win64">

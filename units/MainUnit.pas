@@ -25,11 +25,11 @@ type
     N7: TMenuItem;
     N8: TMenuItem;
     N9: TMenuItem;
-    N10: TMenuItem;
-    N11: TMenuItem;
+    miReisInput: TMenuItem;
+    miReisEdit: TMenuItem;
     N12: TMenuItem;
-    N13: TMenuItem;
-    N14: TMenuItem;
+    miGravimeter: TMenuItem;
+    miReisControl: TMenuItem;
     N15: TMenuItem;
     N16: TMenuItem;
     N17: TMenuItem;
@@ -45,9 +45,11 @@ type
     tblPloshadCOMMENT: TWideStringField;
     procedure N1Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
-    procedure N14Click(Sender: TObject);
+    procedure miReisControlClick(Sender: TObject);
     procedure dbGridPloshadDblClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure N9Click(Sender: TObject);
+    procedure miGravimeterClick(Sender: TObject);
   private
     procedure loadFile(filename: String);
   public
@@ -61,9 +63,14 @@ implementation
 
 {$R *.dfm}
 
-uses PloshadUnit,System.StrUtils, Database, Protocol;
+uses PloshadUnit,System.StrUtils, Database, Protocol, Gravimeter;
 
-procedure TFormMain.N14Click(Sender: TObject);
+procedure TFormMain.miGravimeterClick(Sender: TObject);
+begin
+  FormGravimeter.ShowModal;
+end;
+
+procedure TFormMain.miReisControlClick(Sender: TObject);
 begin
   FormProtocol.ShowModal;
 end;
@@ -85,6 +92,15 @@ begin
       loadFile(OpenDialog1.FileName)
     else
      raise Exception.Create('File does not exist.');
+  end;
+end;
+
+procedure TFormMain.N9Click(Sender: TObject);
+begin
+  if MessageDlg('¬ы действительно хотите завершить работу?', mtconfirmation,
+    [mbYes, mbNo], 0) = mrYes then
+  begin
+    Close;
   end;
 end;
 
