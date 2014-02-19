@@ -21,12 +21,14 @@ object FormDatabase: TFormDatabase
     Catalog = ''
     Properties.Strings = (
       'codepage=WIN1251')
+    BeforeConnect = ZConnection1BeforeConnect
     HostName = ''
     Port = 0
-    Database = ''
+    Database = 'C:\workspace\gmapp\trunk\gmdb\GMDB.FDB'
     User = 'GM'
     Password = ''
-    Protocol = ''
+    Protocol = 'firebirdd-2.5'
+    LibraryLocation = 'C:\workspace\gmapp\trunk\fbclient.dll'
     Left = 80
     Top = 24
   end
@@ -38,7 +40,10 @@ object FormDatabase: TFormDatabase
   end
   object ZTableProtocol: TZTable
     Connection = ZConnection1
+    SortedFields = 'ID'
+    OnCalcFields = ZTableProtocolCalcFields
     TableName = 'PROTOCOL'
+    IndexFieldNames = 'ID Asc'
     Left = 312
     Top = 96
     object ZTableProtocolID: TIntegerField
@@ -87,6 +92,33 @@ object FormDatabase: TFormDatabase
     end
     object ZTableProtocolTERRAIN: TFloatField
       FieldName = 'TERRAIN'
+    end
+    object ZTableProtocolTIME: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'TIME'
+      OnGetText = ZTableProtocolTIMEGetText
+      Size = 0
+      Calculated = True
+    end
+    object ZTableProtocolPUNKT: TBooleanField
+      FieldKind = fkCalculated
+      FieldName = 'PUNKT'
+      OnChange = ZTableProtocolPUNKTChange
+      OnGetText = ZTableProtocolPUNKTGetText
+      OnSetText = ZTableProtocolPUNKTSetText
+      Calculated = True
+    end
+    object ZTableProtocolG: TFloatField
+      FieldName = 'G'
+    end
+    object ZTableProtocolTIME_DUR: TIntegerField
+      FieldKind = fkCalculated
+      FieldName = 'TIME_DUR'
+      OnGetText = ZTableProtocolTIME_DURGetText
+      Calculated = True
+    end
+    object ZTableProtocolFK_REIS: TIntegerField
+      FieldName = 'FK_REIS'
     end
   end
 end

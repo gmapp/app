@@ -2,8 +2,8 @@ object FormMain: TFormMain
   Left = 0
   Top = 0
   Caption = #1054#1073#1088#1072#1073#1086#1090#1082#1072' '#1076#1072#1085#1085#1099#1093' '#1076#1083#1103' '#1075#1088#1072#1074#1080#1084#1077#1090#1088#1072' CG-5'
-  ClientHeight = 421
-  ClientWidth = 575
+  ClientHeight = 443
+  ClientWidth = 929
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -13,72 +13,127 @@ object FormMain: TFormMain
   Menu = MainMenu1
   OldCreateOrder = False
   Position = poDesktopCenter
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
   OnShow = FormShow
-  DesignSize = (
-    575
-    421)
   PixelsPerInch = 96
   TextHeight = 13
-  object Button1: TButton
-    Left = 8
-    Top = 8
-    Width = 75
-    Height = 25
-    Caption = 'Test'
+  object Panel1: TPanel
+    Left = 0
+    Top = 32
+    Width = 929
+    Height = 411
+    Align = alBottom
     TabOrder = 0
+    inline OporpunktFrame1: TOporpunktListFrame
+      Left = 1
+      Top = 1
+      Width = 927
+      Height = 409
+      Align = alClient
+      TabOrder = 0
+      Visible = False
+      ExplicitLeft = 1
+      ExplicitTop = 1
+      ExplicitWidth = 927
+      ExplicitHeight = 409
+      inherited dbGridPloshad: TDBGrid
+        Width = 927
+        Height = 409
+      end
+      inherited DBGrid1: TDBGrid
+        Width = 927
+        Height = 409
+      end
+      inherited dbGridOporPunkt: TDBGrid
+        Width = 927
+        Height = 409
+      end
+    end
+    inline ProtocolFrame1: TProtocolListFrame
+      Left = 1
+      Top = 1
+      Width = 927
+      Height = 409
+      Align = alClient
+      TabOrder = 1
+      ExplicitLeft = 1
+      ExplicitTop = 1
+      ExplicitWidth = 927
+      ExplicitHeight = 409
+      inherited DBGrid1: TDBGrid
+        Width = 892
+        Height = 250
+      end
+      inherited btnProcess: TButton
+        Top = 368
+        ExplicitTop = 368
+      end
+      inherited btnSave: TButton
+        Top = 368
+        ExplicitTop = 368
+      end
+      inherited ProgressBar1: TProgressBar
+        Left = 692
+        Top = 368
+        ExplicitLeft = 692
+        ExplicitTop = 368
+      end
+    end
+    inline ReisFrame1: TReisListFrame
+      Left = 1
+      Top = 1
+      Width = 927
+      Height = 409
+      Align = alClient
+      TabOrder = 2
+      ExplicitLeft = 1
+      ExplicitTop = 1
+      ExplicitWidth = 927
+      ExplicitHeight = 409
+      inherited dbGridReis: TDBGrid
+        Width = 927
+        Height = 409
+      end
+    end
   end
-  object dbGridPloshad: TDBGrid
-    Left = 8
-    Top = 39
-    Width = 559
-    Height = 374
-    Anchors = [akLeft, akTop, akRight, akBottom]
-    DataSource = dsPloshad
-    ReadOnly = True
+  object FlowPanel1: TFlowPanel
+    Left = 1
+    Top = 3
+    Width = 808
+    Height = 27
+    BevelOuter = bvNone
     TabOrder = 1
-    TitleFont.Charset = DEFAULT_CHARSET
-    TitleFont.Color = clWindowText
-    TitleFont.Height = -11
-    TitleFont.Name = 'Tahoma'
-    TitleFont.Style = []
-    OnDblClick = dbGridPloshadDblClick
-    Columns = <
-      item
-        Expanded = False
-        FieldName = 'NAME'
-        Width = 100
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'REGION'
-        Width = 100
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'START_DATE'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'COMMENT'
-        Width = 200
-        Visible = True
-      end>
+    object linkPloshad: TLinkLabel
+      Left = 0
+      Top = 0
+      Width = 103
+      Height = 17
+      Caption = '<a href="">'#1042#1099#1073#1077#1088#1080#1090#1077' '#1087#1083#1086#1097#1072#1076#1100'</a>'
+      TabOrder = 0
+      UseVisualStyle = True
+      OnLinkClick = linkPloshadLinkClick
+    end
+    object linkReis: TLinkLabel
+      Left = 103
+      Top = 0
+      Width = 74
+      Height = 17
+      Caption = '<a href="">'#1042#1099#1073#1088#1080#1090#1077' '#1088#1077#1081#1089'</a>'
+      TabOrder = 1
+      UseVisualStyle = True
+      OnLinkClick = linkReisLinkClick
+    end
   end
   object MainMenu1: TMainMenu
     Left = 432
-    Top = 48
     object p1: TMenuItem
       Caption = #1055#1083#1086#1097#1072#1076#1100
       object N1: TMenuItem
-        Caption = #1057#1086#1079#1076#1072#1090#1100
-        OnClick = N1Click
+        Action = actPlohadAdd
       end
       object N2: TMenuItem
-        Caption = #1054#1090#1082#1088#1099#1090#1100
-        OnClick = N2Click
+        Action = actPloshadOpen
       end
       object N3: TMenuItem
         Caption = #1047#1072#1082#1088#1099#1090#1100
@@ -105,30 +160,29 @@ object FormMain: TFormMain
     end
     object p2: TMenuItem
       Caption = #1056#1077#1081#1089#1099
-      object miReisInput: TMenuItem
-        Caption = #1042#1074#1086#1076
+      object N10: TMenuItem
+        Action = actReisEnter
       end
-      object miReisEdit: TMenuItem
-        Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1085#1080#1077
+      object N11: TMenuItem
+        Action = actReisEdit
       end
       object N12: TMenuItem
         Caption = '-'
       end
-      object miGravimeter: TMenuItem
-        Caption = #1043#1088#1072#1074#1080#1084#1077#1090#1088#1099
-        OnClick = miGravimeterClick
+      object N13: TMenuItem
+        Action = actGravimeter
       end
-      object miReisControl: TMenuItem
+      object N14: TMenuItem
         Caption = #1050#1086#1085#1090#1088#1086#1083#1100
-        OnClick = miReisControlClick
+        OnClick = N14Click
       end
       object N15: TMenuItem
         Caption = #1054#1087#1086#1088#1085#1099#1077
         object N16: TMenuItem
-          Caption = #1057#1086#1079#1076#1072#1090#1100
+          Action = actOporPunktAdd
         end
         object N17: TMenuItem
-          Caption = #1055#1088#1086#1089#1084#1086#1090#1088
+          Action = actOporPunktTable
         end
       end
     end
@@ -145,35 +199,35 @@ object FormMain: TFormMain
       Caption = #1057#1087#1088#1072#1074#1082#1072
     end
   end
-  object OpenDialog1: TOpenDialog
-    Left = 392
-    Top = 160
-  end
-  object dsPloshad: TDataSource
-    AutoEdit = False
-    DataSet = tblPloshad
-    Left = 240
-    Top = 328
-  end
-  object tblPloshad: TZTable
-    Connection = FormDatabase.ZConnection1
-    TableName = 'PLOSHAD'
-    Left = 400
-    Top = 304
-    object tblPloshadNAME: TWideStringField
-      FieldName = 'NAME'
-      Size = 255
+  object ActionList1: TActionList
+    Left = 568
+    Top = 8
+    object actOporPunktTable: TAction
+      Caption = #1055#1088#1086#1089#1084#1086#1090#1088
+      OnExecute = actOporPunktTableExecute
     end
-    object tblPloshadREGION: TWideStringField
-      FieldName = 'REGION'
-      Size = 255
+    object actOporPunktAdd: TAction
+      Caption = #1057#1086#1079#1076#1072#1090#1100
     end
-    object tblPloshadSTART_DATE: TDateField
-      FieldName = 'START_DATE'
+    object actReisEnter: TAction
+      Caption = #1042#1074#1086#1076
+      OnExecute = actReisEnterExecute
     end
-    object tblPloshadCOMMENT: TWideStringField
-      FieldName = 'COMMENT'
-      Size = 1024
+    object actReisEdit: TAction
+      Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1085#1080#1077
+      OnExecute = actReisEditExecute
+    end
+    object actPlohadAdd: TAction
+      Caption = #1057#1086#1079#1076#1072#1090#1100
+      OnExecute = actPlohadAddExecute
+    end
+    object actPloshadOpen: TAction
+      Caption = #1054#1090#1082#1088#1099#1090#1100
+      OnExecute = actPloshadOpenExecute
+    end
+    object actGravimeter: TAction
+      Caption = #1043#1088#1072#1074#1080#1084#1077#1090#1088#1099
+      OnExecute = actGravimeterExecute
     end
   end
 end
