@@ -2,7 +2,7 @@ object FormDatabase: TFormDatabase
   Left = 0
   Top = 0
   Caption = 'FormDatabase'
-  ClientHeight = 224
+  ClientHeight = 260
   ClientWidth = 480
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -21,6 +21,7 @@ object FormDatabase: TFormDatabase
     Catalog = ''
     Properties.Strings = (
       'codepage=WIN1251')
+    Connected = True
     BeforeConnect = ZConnection1BeforeConnect
     HostName = ''
     Port = 0
@@ -119,6 +120,17 @@ object FormDatabase: TFormDatabase
     end
     object ZTableProtocolFK_REIS: TIntegerField
       FieldName = 'FK_REIS'
+    end
+    object ZTableProtocolBRACK: TSmallintField
+      FieldName = 'BRACK'
+    end
+    object ZTableProtocolBRACK_CALC: TBooleanField
+      FieldKind = fkCalculated
+      FieldName = 'BRACK_CALC'
+      OnChange = ZTableProtocolBRACK_CALCChange
+      OnGetText = ZTableProtocolBRACK_CALCGetText
+      OnSetText = ZTableProtocolBRACK_CALCSetText
+      Calculated = True
     end
   end
 end

@@ -41,6 +41,7 @@ type
     { Private declarations }
   public
     procedure open;
+    procedure add;
   end;
 
 implementation
@@ -61,7 +62,7 @@ end;
 
 procedure TReisListFrame.actEditExecute(Sender: TObject);
 begin
- if dbGridReis.SelectedIndex>0 then
+  if dbGridReis.DataSource.DataSet.RecNo>0 then
     FormReis.Show(tblReis, false);
 end;
 
@@ -78,7 +79,7 @@ end;
 procedure TReisListFrame.dbGridReisDblClick(Sender: TObject);
 begin
   actSelect.Execute;
-  {if dbGridReis.SelectedIndex>0 then
+  {if dbGridReis.DataSource.DataSet.RecNo>0 then
   begin
     FormReis.Show(tblReis, false)
   end else
@@ -95,7 +96,22 @@ end;
 
 procedure TReisListFrame.open;
 begin
-  tblReis.Open;
+  tblReis.Filter := 'FK_PLOSHAD_ID='+IntToStr(FormMain.PloshadId);
+  tblReis.Filtered:=True;
+  if (tblReis.Active) then
+  begin
+    dsReis.DataSet.Refresh;
+  end else
+  begin
+    tblReis.Open;
+  end;
+  tblReisPLOSHAD_NAME.LookupDataSet.Refresh;
+end;
+
+procedure TReisListFrame.add;
+begin
+  open;
+  actAdd.Execute;
 end;
 
 end.

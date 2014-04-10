@@ -34,6 +34,8 @@ implementation
 
 {$R *.dfm}
 
+uses MainUnit;
+
 procedure TFormOporPunkt.btnOkClick(Sender: TObject);
 begin
   if Length(edProfil.Text)<1 then
@@ -49,6 +51,7 @@ begin
   FTable.FieldByName('NO_GRAV').Value:=edPribor.Text;
   FTable.FieldByName('OP_DATE').Value:=dtDate.Date;
   FTable.FieldByName('COMMENT').Value:=edComment.Text;
+  FTable.FieldByName('FK_PLOSHAD_ID').Value:=FormMain.PloshadId;
   FTable.Post;
 end;
 

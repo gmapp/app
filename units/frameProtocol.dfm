@@ -145,6 +145,7 @@ object ProtocolListFrame: TProtocolListFrame
     TitleFont.Name = 'Tahoma'
     TitleFont.Style = []
     OnCellClick = DBGrid1CellClick
+    OnColEnter = DBGrid1ColEnter
     OnColExit = DBGrid1ColExit
     OnDrawColumnCell = DBGrid1DrawColumnCell
     OnKeyPress = DBGrid1KeyPress
@@ -250,7 +251,14 @@ object ProtocolListFrame: TProtocolListFrame
         FieldName = 'G'
         Title.Alignment = taCenter
         Title.Caption = 'G'#1085#1072#1073#1083
-        Width = 136
+        Width = 106
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'BRACK_CALC'
+        Title.Caption = #1041#1088#1072#1082
+        Width = 28
         Visible = True
       end>
   end
@@ -276,9 +284,8 @@ object ProtocolListFrame: TProtocolListFrame
   object chbPunkt: TDBCheckBox
     Left = 432
     Top = 18
-    Width = 97
-    Height = 17
-    Caption = 'chbPunkt'
+    Width = 16
+    Height = 16
     DataField = 'PUNKT'
     DataSource = DataSource1
     TabOrder = 3
@@ -301,6 +308,18 @@ object ProtocolListFrame: TProtocolListFrame
     Height = 4
     TabOrder = 5
     Visible = False
+  end
+  object chbBrack: TDBCheckBox
+    Left = 502
+    Top = 18
+    Width = 16
+    Height = 16
+    DataField = 'BRACK_CALC'
+    DataSource = DataSource1
+    TabOrder = 6
+    Visible = False
+    OnClick = chbBrackClick
+    OnMouseUp = chbBrackMouseUp
   end
   object DataSource1: TDataSource
     AutoEdit = False

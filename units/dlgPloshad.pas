@@ -33,6 +33,8 @@ implementation
 
 {$R *.dfm}
 
+uses MainUnit;
+
 procedure TFormPloshad.btnOkClick(Sender: TObject);
 begin
   if Length(edName.Text)<1 then
@@ -47,6 +49,8 @@ begin
   FTable.FieldByName('START_DATE').Value:=dtNachalo.Date;
   FTable.FieldByName('COMMENT').Value:=edComment.Text;
   FTable.Post;
+
+  //FormMain.ReisFrame1.tblp
 end;
 
 procedure TFormPloshad.FormClose(Sender: TObject; var Action: TCloseAction);

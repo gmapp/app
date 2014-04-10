@@ -50,6 +50,7 @@ uses dlgPloshad, MainUnit;
 procedure TPloshadListFrame.actAddExecute(Sender: TObject);
 begin
   FormPloshad.Show(tblPloshad, true);
+  dsPloshad.DataSet.Refresh;
 end;
 
 procedure TPloshadListFrame.actAddUpdate(Sender: TObject);
@@ -61,6 +62,7 @@ procedure TPloshadListFrame.actEditExecute(Sender: TObject);
 begin
   if dbGridPloshad.DataSource.DataSet.RecNo>0 then
     FormPloshad.Show(tblPloshad, false);
+  dsPloshad.DataSet.Refresh;
 end;
 
 procedure TPloshadListFrame.actSelectExecute(Sender: TObject);

@@ -35,6 +35,18 @@ type
     N2: TMenuItem;
     N3: TMenuItem;
     N4: TMenuItem;
+    tblOporPunktFK_PLOSHAD_ID: TIntegerField;
+    dsControl: TDataSource;
+    queryControl: TZQuery;
+    queryControlID: TIntegerField;
+    queryControlNO_PR: TIntegerField;
+    queryControlNO_PK: TIntegerField;
+    queryControlGRAV: TIntegerField;
+    queryControlNO_GRAV: TIntegerField;
+    queryControlOP_DATE: TDateTimeField;
+    queryControlCOMMENT: TStringField;
+    queryControlOTKL2: TFloatField;
+    queryControlKRATN: TIntegerField;
     procedure actAddUpdate(Sender: TObject);
     procedure actAddExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -42,14 +54,15 @@ type
   private
     { Private declarations }
   public
-    procedure open;
+    procedure open(control: Boolean=False);
+    procedure add;
   end;
 
 implementation
 
 {$R *.dfm}
 
-uses dlgOporPunkt;
+uses dlgOporPunkt, MainUnit;
 
 procedure TOporpunktListFrame.actAddExecute(Sender: TObject);
 begin
@@ -63,13 +76,13 @@ end;
 
 procedure TOporpunktListFrame.actEditExecute(Sender: TObject);
 begin
- if dbGridOporPunkt.SelectedIndex>0 then
+  if dbGridOporPunkt.DataSource.DataSet.RecNo>0 then
     FormOporPunkt.Show(tblOporPunkt, false);
 end;
 
 procedure TOporpunktListFrame.dbGridOporPunktDblClick(Sender: TObject);
 begin
-  if dbGridOporPunkt.SelectedIndex>0 then
+  if dbGridOporPunkt.DataSource.DataSet.RecNo>0 then
   begin
     FormOporPunkt.Show(tblOporPunkt, false)
   end else
@@ -79,9 +92,28 @@ begin
   dbGridOporPunkt.Refresh;
 end;
 
-procedure TOporpunktListFrame.open;
+procedure TOporpunktListFrame.open(control: Boolean=False);
 begin
-  tblOporPunkt.Open;
+  if (control) then
+  begin
+    dbGridOporPunkt.DataSource:=dsControl;
+    queryControl.SQL.Add('select *, 0 as OTKL2, 0 as KRATN from opor_punkt WHERE ');
+    queryControl.Filter := 'FK_PLOSHAD_ID='+IntToStr(FormMain.PloshadId);
+    tblOporPunkt.Filtered:=True;
+    queryControl.Open;
+  end else
+  begin
+    dbGridOporPunkt.DataSource:=dsOporPunkt;
+    tblOporPunkt.Filter := 'FK_PLOSHAD_ID='+IntToStr(FormMain.PloshadId);
+    tblOporPunkt.Filtered:=True;
+    tblOporPunkt.Open;
+  end;
+end;
+
+procedure TOporpunktListFrame.add;
+begin
+  open();
+  actAdd.Execute;
 end;
 
 end.

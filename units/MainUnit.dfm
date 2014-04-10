@@ -173,8 +173,7 @@ object FormMain: TFormMain
         Action = actGravimeter
       end
       object N14: TMenuItem
-        Caption = #1050#1086#1085#1090#1088#1086#1083#1100
-        OnClick = N14Click
+        Action = actControl
       end
       object N15: TMenuItem
         Caption = #1054#1087#1086#1088#1085#1099#1077
@@ -199,7 +198,7 @@ object FormMain: TFormMain
       Caption = #1057#1087#1088#1072#1074#1082#1072
     end
   end
-  object ActionList1: TActionList
+  object actListMain: TActionList
     Left = 568
     Top = 8
     object actOporPunktTable: TAction
@@ -208,6 +207,7 @@ object FormMain: TFormMain
     end
     object actOporPunktAdd: TAction
       Caption = #1057#1086#1079#1076#1072#1090#1100
+      OnExecute = actOporPunktAddExecute
     end
     object actReisEnter: TAction
       Caption = #1042#1074#1086#1076
@@ -228,6 +228,10 @@ object FormMain: TFormMain
     object actGravimeter: TAction
       Caption = #1043#1088#1072#1074#1080#1084#1077#1090#1088#1099
       OnExecute = actGravimeterExecute
+    end
+    object actControl: TAction
+      Caption = #1050#1086#1085#1090#1088#1086#1083#1100
+      OnExecute = actControlExecute
     end
   end
 end

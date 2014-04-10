@@ -203,8 +203,8 @@ object OporpunktListFrame: TOporpunktListFrame
   object tblOporPunkt: TZTable
     Connection = FormDatabase.ZConnection1
     TableName = 'OPOR_PUNKT'
-    Left = 408
-    Top = 128
+    Left = 376
+    Top = 88
     object tblOporPunktID: TIntegerField
       FieldName = 'ID'
       Required = True
@@ -251,12 +251,15 @@ object OporpunktListFrame: TOporpunktListFrame
       FieldName = 'SKP'
       Calculated = True
     end
+    object tblOporPunktFK_PLOSHAD_ID: TIntegerField
+      FieldName = 'FK_PLOSHAD_ID'
+    end
   end
   object dsOporPunkt: TDataSource
     AutoEdit = False
     DataSet = tblOporPunkt
-    Left = 288
-    Top = 144
+    Left = 304
+    Top = 88
   end
   object ActionList1: TActionList
     Left = 560
@@ -288,6 +291,47 @@ object OporpunktListFrame: TOporpunktListFrame
     end
     object N4: TMenuItem
       Action = actDelete
+    end
+  end
+  object dsControl: TDataSource
+    AutoEdit = False
+    DataSet = queryControl
+    Left = 320
+    Top = 208
+  end
+  object queryControl: TZQuery
+    Connection = FormDatabase.ZConnection1
+    SQL.Strings = (
+      'select *, 0 as OTKL2, 0 as KRATN from opor_punkt')
+    Params = <>
+    Left = 456
+    Top = 232
+    object queryControlID: TIntegerField
+      FieldName = 'ID'
+    end
+    object queryControlNO_PR: TIntegerField
+      FieldName = 'NO_PR'
+    end
+    object queryControlNO_PK: TIntegerField
+      FieldName = 'NO_PK'
+    end
+    object queryControlGRAV: TIntegerField
+      FieldName = 'GRAV'
+    end
+    object queryControlNO_GRAV: TIntegerField
+      FieldName = 'NO_GRAV'
+    end
+    object queryControlOP_DATE: TDateTimeField
+      FieldName = 'OP_DATE'
+    end
+    object queryControlCOMMENT: TStringField
+      FieldName = 'COMMENT'
+    end
+    object queryControlOTKL2: TFloatField
+      FieldName = 'OTKL2'
+    end
+    object queryControlKRATN: TIntegerField
+      FieldName = 'KRATN'
     end
   end
 end

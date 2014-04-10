@@ -32,7 +32,7 @@ implementation
 
 {$R *.dfm}
 
-uses Database;
+uses MainUnit, Data.DB, Database;
 
 procedure TFormGravimeter.btnOkClick(Sender: TObject);
 var
@@ -55,7 +55,7 @@ begin
 
   num:=StrToInt(leNum.Text);
   c:=StrToFloat(leC.Text);
-  FormDatabase.setGravimeter(num,c,leComment.Text);
+  FormDatabase.setGravimeter(num,c,leComment.Text, FormMain.PloshadId);
 end;
 
 procedure TFormGravimeter.clear;
@@ -78,7 +78,7 @@ end;
 
 procedure TFormGravimeter.btnCancelClick(Sender: TObject);
 begin
-  FTable.Cancel;
+  //FTable.Cancel;
 end;
 
 procedure TFormGravimeter.show(tbl: TZTable; create: boolean);
@@ -91,14 +91,14 @@ begin
   begin
     clear;
 
-    FTable.Insert();
-    FTable.Edit;
+    //FTable.Insert();
+    //FTable.Edit;
   end else
   begin
     leNum.Text:=VarToStr(FTable.FieldByName('NUM').Value);
     leC.Text:=VarToStr(FTable.FieldByName('C').Value);
     leComment.Text:=VarToStr(FTable.FieldByName('COMMENT').Value);
-    FTable.Edit;
+    //FTable.Edit;
   end;
   showModal;
 end;

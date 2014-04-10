@@ -58,7 +58,7 @@ object ReisListFrame: TReisListFrame
     Connection = FormDatabase.ZConnection1
     TableName = 'REIS'
     Left = 408
-    Top = 128
+    Top = 144
     object tblReisID: TIntegerField
       FieldName = 'ID'
       Required = True
@@ -135,7 +135,6 @@ object ReisListFrame: TReisListFrame
     end
     object N4: TMenuItem
       Action = actDelete
-      OnClick = N4Click
     end
   end
   object tblPloshad: TZTable

@@ -76,6 +76,9 @@ begin
   idField:=FTable.FieldByName('ID');
   if (idField<>nil) AND (NOT idField.IsNull) then
   begin
+    if (FTable.ReadOnly) then FTable.ReadOnly:=False;
+    FTable.Edit;
+
     FTable.FieldByName('OPERATOR').Value:=edOperator.Text;
     FTable.FieldByName('NOMER_PRIBORA').Value:=edPribor.Text;
     FTable.FieldByName('DATE_IZMERENIA').Value:=aDate;
@@ -119,7 +122,7 @@ end;
 
 procedure TFormReis.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  FTable.ReadOnly:=True;
+  //FTable.ReadOnly:=True;
 end;
 
 procedure TFormReis.show(tbl: TZTable; create: boolean);

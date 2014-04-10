@@ -12,8 +12,6 @@ type
   TGravimeterFrame = class(TFrame)
     dbGridGrav: TDBGrid;
     PopupMenu1: TPopupMenu;
-    N1: TMenuItem;
-    N5: TMenuItem;
     N2: TMenuItem;
     N3: TMenuItem;
     N4: TMenuItem;
@@ -27,6 +25,8 @@ type
     tblGravNUM: TIntegerField;
     tblGravC: TFloatField;
     tblGravCOMMENT: TWideStringField;
+    tblGravID: TIntegerField;
+    tblGravFK_PLOSHAD_ID: TIntegerField;
     procedure actAddExecute(Sender: TObject);
     procedure actAddUpdate(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -44,11 +44,12 @@ implementation
 
 {$R *.dfm}
 
-uses dlgGravimeter;
+uses dlgGravimeter, MainUnit;
 
 procedure TGravimeterFrame.actAddExecute(Sender: TObject);
 begin
   FormGravimeter.Show(tblGrav, true);
+  dbGridGrav.DataSource.DataSet.Refresh;
 end;
 
 procedure TGravimeterFrame.actAddUpdate(Sender: TObject);
@@ -60,6 +61,7 @@ procedure TGravimeterFrame.actEditExecute(Sender: TObject);
 begin
   if dbGridGrav.DataSource.DataSet.RecNo>0 then
     FormGravimeter.Show(tblGrav, false);
+  dbGridGrav.DataSource.DataSet.Refresh;
 end;
 
 procedure TGravimeterFrame.actSelectExecute(Sender: TObject);
@@ -87,17 +89,26 @@ begin
   begin
     FormGravimeter.Show(tblGrav, true);
   end;
-  dbGridGrav.Refresh;
+  dbGridGrav.DataSource.DataSet.Refresh;
 end;
 
 procedure TGravimeterFrame.open;
 begin
-  tblGrav.Open;
+  tblGrav.Filter := 'FK_PLOSHAD_ID='+IntToStr(FormMain.PloshadId);
+  tblGrav.Filtered:=True;
+  if (tblGrav.Active) then
+  begin
+    dsGrav.DataSet.Refresh;
+  end else
+  begin
+    tblGrav.Open;
+  end;
 end;
 
 procedure TGravimeterFrame.add;
 begin
   FormGravimeter.Show(tblGrav, true);
+  dbGridGrav.DataSource.DataSet.Refresh;
 end;
 
 end.

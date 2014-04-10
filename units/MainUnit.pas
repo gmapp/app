@@ -37,7 +37,7 @@ type
     N17: TMenuItem;
     N18: TMenuItem;
     Panel1: TPanel;
-    ActionList1: TActionList;
+    actListMain: TActionList;
     actOporPunktTable: TAction;
     actOporPunktAdd: TAction;
     OporpunktFrame1: TOporpunktListFrame;
@@ -51,7 +51,7 @@ type
     FlowPanel1: TFlowPanel;
     linkReis: TLinkLabel;
     ReisFrame1: TReisListFrame;
-    procedure N14Click(Sender: TObject);
+    actControl: TAction;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure N9Click(Sender: TObject);
@@ -67,6 +67,8 @@ type
       LinkType: TSysLinkType);
     procedure linkReisLinkClick(Sender: TObject; const Link: string;
       LinkType: TSysLinkType);
+    procedure actOporPunktAddExecute(Sender: TObject);
+    procedure actControlExecute(Sender: TObject);
   private
     FPloshadId: Integer;
     FPloshad: String;
@@ -89,6 +91,10 @@ type
     property Grav: TGravimeter read FGrav;
     //property OporPunk1: TOporPunkt read FOporPunk1;
     //property OporPunk2: TOporPunkt read FOporPunk2;
+
+    function StringToDate(str: String): TDate;
+
+    procedure log(msg: String);
   end;
 
 var
@@ -101,9 +107,9 @@ implementation
 uses dlgPloshad,System.StrUtils, System.DateUtils, frmProtocol, dlgGravimeter, frmPloshad,
   frmControl, frmGravimeter;
 
-procedure TFormMain.N14Click(Sender: TObject);
+procedure TFormMain.log(msg: String);
 begin
-  FormControl.Open;
+  OutputDebugString(StringToOleStr(msg));
 end;
 
 procedure TFormMain.N17Click(Sender: TObject);
@@ -116,7 +122,7 @@ begin
   Close;
 end;
 
-function StringToDate(str: String): TDate;
+function TFormMain.StringToDate(str: String): TDate;
 	var
 		//FormatSettings: TFormatSettings;
     sl:TStringList;
@@ -154,10 +160,22 @@ begin
   end;
 end;
 
+procedure TFormMain.actControlExecute(Sender: TObject);
+begin
+  FormControl.Open;
+end;
+
 procedure TFormMain.actGravimeterExecute(Sender: TObject);
 begin
   FormGravimeterList.open;
   //FormGravimeter.open;
+end;
+
+procedure TFormMain.actOporPunktAddExecute(Sender: TObject);
+begin
+  OporpunktFrame1.Visible:=True;
+  OporpunktFrame1.BringToFront;
+  OporpunktFrame1.add;
 end;
 
 procedure TFormMain.actOporPunktTableExecute(Sender: TObject);
@@ -194,7 +212,7 @@ procedure TFormMain.actReisEnterExecute(Sender: TObject);
 begin
   ReisFrame1.Visible:=True;
   ReisFrame1.BringToFront;
-  ReisFrame1.open;
+  ReisFrame1.add;
 end;
 
 procedure TFormMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -253,7 +271,7 @@ end;
 procedure TFormMain.linkReisLinkClick(Sender: TObject; const Link: string;
   LinkType: TSysLinkType);
 begin
-  actReisEnter.Execute;
+  actReisEdit.Execute;
   //FormReisList.open;
 end;
 
@@ -322,23 +340,32 @@ begin
 
         if (Length(text)>0) AND Not AnsiStartsStr('/', text) then
         begin
-          pwc:=StringToOleStr(text);
-          OutputDebugString(pwc);
+          log((text));
+          try
+            text:=ReplaceStr(text,'.',',');
 
-          text:=ReplaceStr(text,'.',',');
+            list.DelimitedText:=text;
 
-          list.DelimitedText:=text;
+            if list.Count<10 then
+            begin
+              log(('ignore short line '+text));
+              continue;
+            end;
 
-          if list.Count<4 then continue;
-
-          Setlength(arr, list.Count+1);
-          arr[0].VInteger:=0;
-          for i := 0 to list.Count-1 do
-            arr[i+1].VAnsiString:=PAnsiString(list[i]);
-          //FormDatabase.ZTable1.InsertRecord(arr);
-          //FormDatabase.ZTable1.AppendRecord(arr);
-          FormDatabase.insertProtocolRecord(FReis.id, protocolDate, list);
-          INC(amount);
+            Setlength(arr, list.Count+1);
+            arr[0].VInteger:=0;
+            for i := 0 to list.Count-1 do
+              arr[i+1].VAnsiString:=PAnsiString(list[i]);
+            //FormDatabase.ZTable1.InsertRecord(arr);
+            //FormDatabase.ZTable1.AppendRecord(arr);
+            FormDatabase.insertProtocolRecord(FReis.id, protocolDate, list);
+            INC(amount);
+          except
+            on E:Exception do
+              begin
+                log('Error '+E.Message+' on process line '+text)
+              end;
+          end;
           Application.ProcessMessages;
         end;
         //FormDatabase.ZTableProtocol.ApplyUpdates;
@@ -348,7 +375,10 @@ begin
     end;
     ds.First;
     ds.Refresh;
-    ShowMessage('Загрузка выполнена: '+IntToStr(amount)+' (проигнорировано '+IntToStr(amountSkip)+')');
+    if (amount<1) then
+      ShowMessage('Ошибка! Данных на указаную дату не найдено.')
+    else
+      ShowMessage('Загрузка выполнена: '+IntToStr(amount)+' (из '+IntToStr(amountSkip)+')');
   finally
     CloseFile(myFile);
     FreeAndNil(list);
@@ -361,6 +391,12 @@ begin
   FPloshadId:=Id;
   FormPloshadList.Hide;
   switchFrame(true);
+  if (FReis.id>0) then
+  begin
+    FReis.id:=0;
+    FReis.oper:='';
+    FReis.num:=0;
+  end;
   updateMainLabel;
 end;
 
@@ -368,7 +404,7 @@ procedure TFormMain.selectReis(id: Integer; name: String);
 begin
   if (FormDatabase.getReis(id, FReis, PloshadId)) then
   begin
-    FormDatabase.getGravimeter(FReis.num, FGrav);
+    FormDatabase.getGravimeter(FReis.num, PloshadId, FGrav);
   end;
   switchFrame(true);
   updateMainLabel;

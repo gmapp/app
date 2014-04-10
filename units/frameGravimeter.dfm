@@ -36,18 +36,13 @@ object GravimeterFrame: TGravimeterFrame
         Expanded = False
         FieldName = 'COMMENT'
         Title.Caption = #1050#1086#1084#1084#1077#1085#1090#1072#1088#1080#1081
+        Width = 500
         Visible = True
       end>
   end
   object PopupMenu1: TPopupMenu
     Left = 536
     Top = 160
-    object N1: TMenuItem
-      Action = actSelect
-    end
-    object N5: TMenuItem
-      Caption = '-'
-    end
     object N2: TMenuItem
       Action = actAdd
     end
@@ -69,6 +64,10 @@ object GravimeterFrame: TGravimeterFrame
     TableName = 'GRAVIMETER'
     Left = 408
     Top = 128
+    object tblGravID: TIntegerField
+      FieldName = 'ID'
+      Required = True
+    end
     object tblGravNUM: TIntegerField
       FieldName = 'NUM'
       Required = True
@@ -80,6 +79,9 @@ object GravimeterFrame: TGravimeterFrame
     object tblGravCOMMENT: TWideStringField
       FieldName = 'COMMENT'
       Size = 1024
+    end
+    object tblGravFK_PLOSHAD_ID: TIntegerField
+      FieldName = 'FK_PLOSHAD_ID'
     end
   end
   object ActionList1: TActionList

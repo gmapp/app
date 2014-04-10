@@ -14,26 +14,19 @@ object FormControl: TFormControl
   Position = poDesktopCenter
   PixelsPerInch = 96
   TextHeight = 13
-  inline OporpunktFrame1: TOporpunktListFrame
+  inline ControlListFrame1: TControlListFrame
     Left = 0
     Top = 0
     Width = 720
     Height = 428
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 720
-    ExplicitHeight = 428
-    inherited dbGridPloshad: TDBGrid
+    ExplicitLeft = -39
+    ExplicitTop = 56
+    inherited dbGridReis: TDBGrid
       Width = 720
       Height = 428
-    end
-    inherited DBGrid1: TDBGrid
-      Width = 720
-      Height = 428
-    end
-    inherited dbGridOporPunkt: TDBGrid
-      Width = 720
-      Height = 428
+      OnDblClick = nil
     end
   end
 end

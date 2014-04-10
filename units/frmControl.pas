@@ -4,11 +4,11 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, frameOporPunkt;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, frameOporPunkt, frameControl;
 
 type
   TFormControl = class(TForm)
-    OporpunktFrame1: TOporpunktListFrame;
+    ControlListFrame1: TControlListFrame;
   private
     { Private declarations }
   public
@@ -24,7 +24,7 @@ implementation
 
 procedure TFormControl.open;
 begin
-  OporpunktFrame1.Open;
+  ControlListFrame1.Open;
   ShowModal;
 end;
 

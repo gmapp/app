@@ -60,6 +60,8 @@ type
     ZTableProtocolG: TFloatField;
     ZTableProtocolTIME_DUR: TIntegerField;
     ZTableProtocolFK_REIS: TIntegerField;
+    ZTableProtocolBRACK: TSmallintField;
+    ZTableProtocolBRACK_CALC: TBooleanField;
     procedure FormCreate(Sender: TObject);
     procedure ZConnection1BeforeConnect(Sender: TObject);
     procedure ZTableProtocolCalcFields(DataSet: TDataSet);
@@ -70,6 +72,11 @@ type
       DisplayText: Boolean);
     procedure ZTableProtocolPUNKTChange(Sender: TField);
     procedure ZTableProtocolTIME_DURGetText(Sender: TField; var Text: string;
+      DisplayText: Boolean);
+    procedure ZTableProtocolBRACK_CALCChange(Sender: TField);
+    procedure ZTableProtocolBRACK_CALCSetText(Sender: TField;
+      const Text: string);
+    procedure ZTableProtocolBRACK_CALCGetText(Sender: TField; var Text: string;
       DisplayText: Boolean);
   private
     FPunktChecks :TDictionary<String, Boolean>;
@@ -87,14 +94,16 @@ type
     function StringToTime(str: String): TTime;
     function getSeconds: Integer;
 
-    function getOporPunkt(pr,pk: Integer; var op: TOporPunkt): Boolean;
-    function getOporPunktByProtocol(protocolId: String; var op: TOporPunkt): Boolean;
+    function getOporPunkt(pr,pk,ploshad_id: Integer; var op: TOporPunkt): Boolean;
+    function getOporPunktByProtocol(protocolId: String; ploshad_id: Integer; var op: TOporPunkt): Boolean;
     function getReis(id: Integer; var reis: TReis; ploshad_id: Integer): Boolean;
 
-    function getGravimeter(num: Integer; var grav: TGravimeter): Boolean;
-    function setGravimeter(num: Integer; c: Double; comment: String): Boolean;
+    function getGravimeter(num: Integer; ploshad_id: Integer; var grav: TGravimeter): Boolean;
+    function setGravimeter(num: Integer; c: Double; comment: String; ploshad_id: Integer): Boolean;
 
     property PunktChecks:TDictionary<String, Boolean> read FPunktChecks;
+
+    procedure calcControl(ploshadId: Integer; reis: TReis);
   end;
 
 var
@@ -103,6 +112,8 @@ var
 implementation
 
 {$R *.dfm}
+
+uses MainUnit;
 
 function TFormDatabase.StringToTime(str: String): TTime;
 	var
@@ -189,10 +200,38 @@ begin
   OutputDebugString(StringToOleStr('ZConnection1BeforeConnect'));
 end;
 
+procedure TFormDatabase.ZTableProtocolBRACK_CALCChange(Sender: TField);
+var
+  id: String;
+  check: Boolean;
+begin
+  OutputDebugString(StringToOleStr('OnChange brack '+Sender.FieldName+' '+Sender.AsString));
+  id:=ZTableProtocol.FieldByName('ID').AsString;
+  // TODO FPunktBrack.AddOrSetValue(id, Sender.AsBoolean);
+end;
+
+procedure TFormDatabase.ZTableProtocolBRACK_CALCGetText(Sender: TField;
+  var Text: string; DisplayText: Boolean);
+var
+  id: String;
+  check: Boolean;
+begin
+  //OutputDebugString(StringToOleStr('ZTableProtocolBRACK_CALCGetText: '+Sender.AsString));
+  //Sender.AsString:=BoolToStr(ZTableProtocol.FieldByName('BRACK').AsInteger=1, True);
+end;
+
+procedure TFormDatabase.ZTableProtocolBRACK_CALCSetText(Sender: TField;
+  const Text: string);
+begin
+  //OutputDebugString(StringToOleStr('ZTableProtocolBRACKSetText'));
+  ZTableProtocol.FieldByName(Sender.FieldName).Value:=Text;
+end;
+
 procedure TFormDatabase.ZTableProtocolCalcFields(DataSet: TDataSet);
 var
   id: String;
   tbl: TZTable;
+  brack: Integer;
 begin
   tbl:=ZTableProtocol;
   //tbl.FieldByName('TIME').Value := tbl.FieldByName('STR_TIME').AsString;
@@ -204,6 +243,14 @@ begin
   begin
     tbl.FieldByName('PUNKT').Value := 'False';
   end;
+
+  brack:=ZTableProtocol.FieldByName('BRACK').AsInteger;
+  //OutputDebugString(StringToOleStr('ZTableProtocolCalcFields brack '+IntToStr(brack)));
+  if (brack=1) then
+    tbl.FieldByName('BRACK_CALC').Value := 'True'
+  else
+    tbl.FieldByName('BRACK_CALC').Value := 'False';
+
   //tbl.FieldByName('G').Value := '';
 end;
 
@@ -212,7 +259,7 @@ var
   id: String;
   check: Boolean;
 begin
-  OutputDebugString(StringToOleStr('OnChange '+Sender.FieldName+' '+Sender.AsString));
+  OutputDebugString(StringToOleStr('OnChange check '+Sender.FieldName+' '+Sender.AsString));
   id:=ZTableProtocol.FieldByName('ID').AsString;
   FPunktChecks.AddOrSetValue(id, Sender.AsBoolean);
 end;
@@ -223,7 +270,7 @@ var
   id: String;
   check: Boolean;
 begin
-  OutputDebugString(StringToOleStr('ZTableProtocolPUNKTGetText '+Sender.AsString));
+  //OutputDebugString(StringToOleStr('ZTableProtocolPUNKTGetText '+Sender.AsString));
   {Text:='False';
   //BoolToStr()
   id:=ZTableProtocol.FieldByName('ID').AsString;
@@ -291,6 +338,7 @@ begin
 end;
 
 //PROTOCOL
+//--LINE-----STATION-----ALT.------GRAV.---SD.--TILTX--TILTY-TEMP---TIDE---DUR-REJ-----TIME----DEC.TIME+DATE--TERRAIN
 function TFormDatabase.insertProtocolRecord(reis: Integer; d: TDate; list:TStringList): boolean;
 var
   sql: String;
@@ -332,17 +380,20 @@ begin
   j:=0;
   for i := 0 to fields.Count-1 do
   begin
-
     if fields[i].InternalCalcField then
       continue;
     f:=fields[i].Name;
-    if 'ID'=f then
+    if ('ID'=f) OR ('G'=f) then
       continue;
     if list.Count>j then
     begin
-      if Pos(':', list[j])>0 then
+      if (Pos(':', list[j])>0) then
       begin
         dt:=d+StringToTime(list[j]);
+        ZQuery.ParamByName(f).AsDateTime := dt;
+      end else if (Pos('/', list[j])>0) then
+      begin
+        dt:=FormMain.StringToDate(list[j]);
         ZQuery.ParamByName(f).AsDateTime := dt;
       end else
       begin
@@ -354,6 +405,12 @@ begin
       else ZQuery.ParamByName(f).AsString := '';
     end;
     INC(j);
+
+    if (j>14) then
+    begin
+      // обработка описана тольок для 14 первых полей
+      break;
+    end;
   end;
   ZQuery.ParamByName('FK_REIS').AsInteger:=reis;
   ZQuery.ExecSQL;
@@ -372,7 +429,7 @@ begin
   Result:=ZQuery.UpdatesPending;
 end;
 
-function TFormDatabase.getOporPunkt(pr,pk: Integer; var op: TOporPunkt): Boolean;
+function TFormDatabase.getOporPunkt(pr,pk,ploshad_id: Integer; var op: TOporPunkt): Boolean;
 var
   sql: String;
   ZQuery: TZQuery;
@@ -381,12 +438,14 @@ begin
   Result:=False;
   op.id:=-1;
 
-  sql:='select * from opor_punkt where no_pr=:no_pr and no_pk=:no_pk';
+  sql:='select * from opor_punkt where no_pr=:no_pr and no_pk=:no_pk'
+    +' and FK_PLOSHAD_ID=:ploshad_id';
   ZQuery:=ZQuery1;
   ZQuery.SQL.Clear;
   ZQuery.SQL.Add(sql);
 	ZQuery.ParamByName('no_pr').AsInteger := pr;
 	ZQuery.ParamByName('no_pk').AsInteger := pk;
+	ZQuery.ParamByName('ploshad_id').AsInteger := ploshad_id;
   ZQuery.Open;
   rows:=ZQuery.RecordCount;
 
@@ -407,7 +466,7 @@ begin
   ZQuery.Close;
 end;
 
-function TFormDatabase.getOporPunktByProtocol(protocolId: String; var op: TOporPunkt): Boolean;
+function TFormDatabase.getOporPunktByProtocol(protocolId: String; ploshad_id: Integer; var op: TOporPunkt): Boolean;
 var
   sql: String;
   ZQuery: TZQuery;
@@ -430,13 +489,13 @@ begin
     ZQuery.First;
     no_pr:=ZQuery.FieldByName('line').Value;
     no_pk:=ZQuery.FieldByName('station').Value;
-    Result:=getOporPunkt(no_pr, no_pk, op);
+    Result:=getOporPunkt(no_pr, no_pk, ploshad_id, op);
   end;
 
   ZQuery.Close;
 end;
 
-function TFormDatabase.getGravimeter(num: Integer; var grav: TGravimeter): Boolean;
+function TFormDatabase.getGravimeter(num: Integer; ploshad_id: Integer; var grav: TGravimeter): Boolean;
 var
   sql: String;
   ZQuery: TZQuery;
@@ -446,11 +505,12 @@ begin
   grav.id:=-1;
   grav.num:=0;
 
-  sql:='select * from gravimeter where num=:num';
+  sql:='select * from gravimeter where num=:num and fk_ploshad_id=:ploshad_id';
   ZQuery:=ZQuery1;
   ZQuery.SQL.Clear;
   ZQuery.SQL.Add(sql);
 	ZQuery.ParamByName('num').AsInteger := num;
+	ZQuery.ParamByName('ploshad_id').AsInteger := ploshad_id;
   ZQuery.Open;
   rows:=ZQuery.RecordCount;
 
@@ -468,7 +528,8 @@ begin
   ZQuery.Close;
 end;
 
-function TFormDatabase.setGravimeter(num: Integer; c: Double; comment: String): Boolean;
+function TFormDatabase.setGravimeter(num: Integer; c: Double; comment: String;
+    ploshad_id: Integer): Boolean;
 var
   sql: String;
   ZQuery: TZQuery;
@@ -478,11 +539,11 @@ var
 begin
   Result:=False;
 
-  isExist:=getGravimeter(num, grav);
-  if (isExist) then
-    sql:='insert into gravimeter(c,comment,num) values(:c,:comment,:num)'
+  isExist:=getGravimeter(num, ploshad_id, grav);
+  if (not isExist) then
+    sql:='insert into gravimeter(c,comment,num,fk_ploshad_id) values(:c,:comment,:num,:ploshad_id)'
   else
-    sql:='update gravimeter set c=:c, comment=:comment where num=:num';
+    sql:='update gravimeter set c=:c, comment=:comment where num=:num and fk_ploshad_id=:ploshad_id';
 
 
   ZQuery:=ZQuery1;
@@ -492,6 +553,7 @@ begin
 	ZQuery.ParamByName('c').AsFloat := c;
 	ZQuery.ParamByName('comment').AsString := comment;
 	ZQuery.ParamByName('num').AsInteger := num;
+	ZQuery.ParamByName('ploshad_id').AsInteger := ploshad_id;
 
   ZQuery.ExecSQL;
   Result:=ZQuery.UpdatesPending;
@@ -557,6 +619,57 @@ begin
   ZQuery.Open;
 
   Result:=ZQuery.Fields[0].Value;
+end;
+
+procedure TFormDatabase.calcControl(ploshadId: Integer; reis: TReis);
+var
+  sql: String;
+  ZQuery: TZQuery;
+  ok: Boolean;
+begin
+  ZQuery:=ZQuery1;
+
+  sql:='delete from control where FK_PLOSHAD_ID=:FK_PLOSHAD_ID and NO_GRAV=:NO_GRAV';
+  ZQuery.SQL.Clear;
+  ZQuery.SQL.Add(sql);
+  ZQuery.ParamByName('FK_PLOSHAD_ID').AsInteger:=ploshadId;
+  ZQuery.ParamByName('NO_GRAV').AsInteger:=reis.num;
+  ZQuery.ExecSQL;
+  ok:=ZQuery.UpdatesPending;
+
+  sql:='insert into control(no_pr,no_pk,gsredn,kratn,no_grav,fk_ploshad_id,grav,op_date)'
+  +' select t.no_pr,t.no_pk,t.gsredn,t.kratn,r.NOMER_PRIBORA,r.fk_ploshad_id,'
+  +' (select grav from opor_punkt op where op.fk_ploshad_id=r.fk_ploshad_id'
+  +' and op.no_pr=t.no_pr and op.no_pk=t.no_pk) as grav, r.date_izmerenia'
+  +' from ('
+      +' SELECT line as no_pr,station as no_pk,sum(g)/count(1) as gsredn,count(1) as kratn,fk_reis'
+      +' FROM PROTOCOL p'
+      +' where fk_reis=:FK_REIS and (brack is null or brack<>1)'
+      +' group by line,station,fk_reis'
+      +' order by line,station'
+  +' ) as t ,reis r'
+  +' where t.FK_REIS=r.id';
+
+  ZQuery.SQL.Clear;
+  ZQuery.SQL.Add(sql);
+  ZQuery.ParamByName('FK_REIS').AsInteger:=reis.id;
+  ZQuery.ExecSQL;
+
+  sql:='update control set otkl2=power((GSREDN-GRAV), 2) where FK_PLOSHAD_ID=:FK_PLOSHAD_ID and NO_GRAV=:NO_GRAV';
+  ZQuery.SQL.Clear;
+  ZQuery.SQL.Add(sql);
+  ZQuery.ParamByName('FK_PLOSHAD_ID').AsInteger:=ploshadId;
+  ZQuery.ParamByName('NO_GRAV').AsInteger:=reis.num;
+  ZQuery.ExecSQL;
+
+  //SQRT((сумма откл^2)/(кратность*(кратность-1)))
+  sql:='update control set skp=sqrt(otkl2/(kratn*(kratn-1))) '
+    +' where FK_PLOSHAD_ID=:FK_PLOSHAD_ID and NO_GRAV=:NO_GRAV and kratn>1';
+  ZQuery.SQL.Clear;
+  ZQuery.SQL.Add(sql);
+  ZQuery.ParamByName('FK_PLOSHAD_ID').AsInteger:=ploshadId;
+  ZQuery.ParamByName('NO_GRAV').AsInteger:=reis.num;
+  ZQuery.ExecSQL;
 end;
 
 end.
