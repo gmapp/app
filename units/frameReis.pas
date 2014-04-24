@@ -37,6 +37,8 @@ type
     procedure dbGridReisDblClick(Sender: TObject);
     procedure actSelectExecute(Sender: TObject);
     procedure N4Click(Sender: TObject);
+    procedure actEditUpdate(Sender: TObject);
+    procedure actDeleteExecute(Sender: TObject);
   private
     { Private declarations }
   public
@@ -48,22 +50,50 @@ implementation
 
 {$R *.dfm}
 
-uses dlgReis, MainUnit;
+uses dlgReis, MainUnit, Database;
 
 procedure TReisListFrame.actAddExecute(Sender: TObject);
 begin
   FormReis.Show(tblReis, true);
 end;
 
+procedure TReisListFrame.actDeleteExecute(Sender: TObject);
+var
+  id: Integer;
+begin
+  if (MessageDlg('Уверены, что хотите удалить рейс?', mtConfirmation, [mbYes, mbNo], mrNo) <> mrYes) then
+	begin
+    Exit;
+  end;
+
+  try
+    id:=tblReis.FieldByName('ID').AsInteger;
+    FormDatabase.removeReis(id);
+    dsReis.DataSet.Refresh;
+    ShowMessage('Рейс успешно удален!');
+  except
+    on E:Exception do
+    begin
+      ShowMessage('При удалении произошла ошибка! Вероятно, есть данные по рейсу.');
+      FormMain.log(E.Message);
+    end;
+  end;
+end;
+
 procedure TReisListFrame.actDeleteUpdate(Sender: TObject);
 begin
-  TAction(Sender).Enabled:=tblReis.Active;
+  TAction(Sender).Enabled:=tblReis.Active and (dbGridReis.DataSource.DataSet.RecNo>0);
 end;
 
 procedure TReisListFrame.actEditExecute(Sender: TObject);
 begin
   if dbGridReis.DataSource.DataSet.RecNo>0 then
     FormReis.Show(tblReis, false);
+end;
+
+procedure TReisListFrame.actEditUpdate(Sender: TObject);
+begin
+  TAction(Sender).Enabled:=tblReis.Active and (dbGridReis.DataSource.DataSet.RecNo>0);
 end;
 
 procedure TReisListFrame.actSelectExecute(Sender: TObject);

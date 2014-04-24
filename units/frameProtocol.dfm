@@ -154,44 +154,44 @@ object ProtocolListFrame: TProtocolListFrame
         Expanded = False
         FieldName = 'LINE'
         Title.Alignment = taCenter
-        Title.Caption = #1055#1088#1086#1092#1080#1083#1100'(LINE)'
-        Width = 76
+        Title.Caption = #1055#1088#1086#1092#1080#1083#1100
+        Width = 59
         Visible = True
       end
       item
         Expanded = False
         FieldName = 'STATION'
         Title.Alignment = taCenter
-        Title.Caption = #1055#1080#1082#1077#1090' (STATION)'
-        Width = 92
+        Title.Caption = #1055#1080#1082#1077#1090
+        Width = 45
         Visible = True
       end
       item
         Expanded = False
         FieldName = 'GRAV'
         Title.Alignment = taCenter
-        Width = 47
+        Width = 59
         Visible = True
       end
       item
         Expanded = False
         FieldName = 'SD'
         Title.Alignment = taCenter
-        Width = 33
+        Width = 55
         Visible = True
       end
       item
         Expanded = False
         FieldName = 'TILTX'
         Title.Alignment = taCenter
-        Width = 36
+        Width = 47
         Visible = True
       end
       item
         Expanded = False
         FieldName = 'TILTY'
         Title.Alignment = taCenter
-        Width = 35
+        Width = 42
         Visible = True
       end
       item
@@ -204,21 +204,21 @@ object ProtocolListFrame: TProtocolListFrame
         Expanded = False
         FieldName = 'TIDE'
         Title.Alignment = taCenter
-        Width = 35
+        Width = 56
         Visible = True
       end
       item
         Expanded = False
         FieldName = 'DUR'
         Title.Alignment = taCenter
-        Width = 33
+        Width = 40
         Visible = True
       end
       item
         Expanded = False
         FieldName = 'REJ'
         Title.Alignment = taCenter
-        Width = 30
+        Width = 44
         Visible = True
       end
       item
@@ -251,7 +251,7 @@ object ProtocolListFrame: TProtocolListFrame
         FieldName = 'G'
         Title.Alignment = taCenter
         Title.Caption = 'G'#1085#1072#1073#1083
-        Width = 106
+        Width = 80
         Visible = True
       end
       item
@@ -279,7 +279,9 @@ object ProtocolListFrame: TProtocolListFrame
     Height = 25
     Anchors = [akLeft, akBottom]
     Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
+    Enabled = False
     TabOrder = 2
+    OnClick = btnSaveClick
   end
   object chbPunkt: TDBCheckBox
     Left = 432
@@ -320,6 +322,15 @@ object ProtocolListFrame: TProtocolListFrame
     Visible = False
     OnClick = chbBrackClick
     OnMouseUp = chbBrackMouseUp
+  end
+  object chbSaveAsOP: TCheckBox
+    Left = 448
+    Top = 413
+    Width = 193
+    Height = 17
+    Anchors = [akRight, akBottom]
+    Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1082#1072#1082' '#1086#1087#1086#1088#1085#1091#1102' '#1089#1077#1090#1100
+    TabOrder = 7
   end
   object DataSource1: TDataSource
     AutoEdit = False

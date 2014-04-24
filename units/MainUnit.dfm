@@ -24,6 +24,7 @@ object FormMain: TFormMain
     Width = 929
     Height = 411
     Align = alBottom
+    Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
     inline OporpunktFrame1: TOporpunktListFrame
       Left = 1
@@ -46,6 +47,22 @@ object FormMain: TFormMain
         Height = 409
       end
       inherited dbGridOporPunkt: TDBGrid
+        Width = 927
+        Height = 409
+      end
+    end
+    inline ReisFrame1: TReisListFrame
+      Left = 1
+      Top = 1
+      Width = 927
+      Height = 409
+      Align = alClient
+      TabOrder = 2
+      ExplicitLeft = 1
+      ExplicitTop = 1
+      ExplicitWidth = 927
+      ExplicitHeight = 409
+      inherited dbGridReis: TDBGrid
         Width = 927
         Height = 409
       end
@@ -79,21 +96,9 @@ object FormMain: TFormMain
         ExplicitLeft = 692
         ExplicitTop = 368
       end
-    end
-    inline ReisFrame1: TReisListFrame
-      Left = 1
-      Top = 1
-      Width = 927
-      Height = 409
-      Align = alClient
-      TabOrder = 2
-      ExplicitLeft = 1
-      ExplicitTop = 1
-      ExplicitWidth = 927
-      ExplicitHeight = 409
-      inherited dbGridReis: TDBGrid
-        Width = 927
-        Height = 409
+      inherited chbSaveAsOP: TCheckBox
+        Top = 368
+        ExplicitTop = 368
       end
     end
   end
@@ -142,13 +147,13 @@ object FormMain: TFormMain
         Caption = '-'
       end
       object N5: TMenuItem
-        Caption = #1057#1090#1072#1090#1080#1089#1090#1080#1082#1072
+        Action = actStat
       end
       object N6: TMenuItem
         Caption = #1055#1077#1095#1072#1090#1100
       end
       object N7: TMenuItem
-        Caption = #1069#1082#1089#1087#1086#1088#1090
+        Action = actBackup
       end
       object N8: TMenuItem
         Caption = '-'
@@ -173,7 +178,13 @@ object FormMain: TFormMain
         Action = actGravimeter
       end
       object N14: TMenuItem
-        Action = actControl
+        Caption = #1050#1086#1085#1090#1088#1086#1083#1100
+        object N19: TMenuItem
+          Action = actControl
+        end
+        object N20: TMenuItem
+          Action = actControlOpor
+        end
       end
       object N15: TMenuItem
         Caption = #1054#1087#1086#1088#1085#1099#1077
@@ -188,11 +199,11 @@ object FormMain: TFormMain
     object p3: TMenuItem
       Caption = #1058#1086#1087#1086#1075#1088#1072#1092#1080#1103
       object N18: TMenuItem
-        Caption = #1048#1084#1087#1086#1088#1090
+        Action = actImportTopograph
       end
     end
     object p4: TMenuItem
-      Caption = #1050#1072#1090#1072#1083#1086#1075
+      Action = actCatalog
     end
     object p5: TMenuItem
       Caption = #1057#1087#1088#1072#1074#1082#1072
@@ -230,8 +241,34 @@ object FormMain: TFormMain
       OnExecute = actGravimeterExecute
     end
     object actControl: TAction
-      Caption = #1050#1086#1085#1090#1088#1086#1083#1100
+      Caption = #1056#1103#1076#1086#1074#1072#1103' '#1089#1077#1090#1100
       OnExecute = actControlExecute
     end
+    object actControlOpor: TAction
+      Caption = #1054#1087#1086#1088#1085#1072#1103' '#1089#1077#1090#1100
+      OnExecute = actControlOporExecute
+    end
+    object actCatalog: TAction
+      Caption = #1050#1072#1090#1072#1083#1086#1075
+      OnExecute = actCatalogExecute
+      OnUpdate = actCatalogUpdate
+    end
+    object actBackup: TAction
+      Caption = #1069#1082#1089#1087#1086#1088#1090
+      OnExecute = actBackupExecute
+    end
+    object actImportTopograph: TAction
+      Caption = #1048#1084#1087#1086#1088#1090
+      OnExecute = actImportTopographExecute
+      OnUpdate = actImportTopographUpdate
+    end
+    object actStat: TAction
+      Caption = #1057#1090#1072#1090#1080#1089#1090#1080#1082#1072
+      OnExecute = actStatExecute
+    end
+  end
+  object OpenDialog1: TOpenDialog
+    Left = 615
+    Top = 8
   end
 end

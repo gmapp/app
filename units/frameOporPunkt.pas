@@ -21,10 +21,6 @@ type
     tblOporPunktOP_DATE: TDateField;
     tblOporPunktCOMMENT: TWideStringField;
     tblOporPunktNO_GRAV: TIntegerField;
-    tblOporPunktOTKL2: TFloatField;
-    tblOporPunktKRATN: TFloatField;
-    tblOporPunktGsredn: TFloatField;
-    tblOporPunktSKP: TFloatField;
     ActionList1: TActionList;
     actSelect: TAction;
     actEdit: TAction;
@@ -47,10 +43,15 @@ type
     queryControlCOMMENT: TStringField;
     queryControlOTKL2: TFloatField;
     queryControlKRATN: TIntegerField;
+    tblOporPunktOTKL2: TFloatField;
+    tblOporPunktKRATN: TIntegerField;
+    tblOporPunktGSREDN: TFloatField;
+    tblOporPunktSKP: TFloatField;
     procedure actAddUpdate(Sender: TObject);
     procedure actAddExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure dbGridOporPunktDblClick(Sender: TObject);
+    procedure tblOporPunktBeforeOpen(DataSet: TDataSet);
   private
     { Private declarations }
   public
@@ -67,6 +68,7 @@ uses dlgOporPunkt, MainUnit;
 procedure TOporpunktListFrame.actAddExecute(Sender: TObject);
 begin
   FormOporPunkt.Show(tblOporPunkt, true);
+    dbGridOporPunkt.DataSource.DataSet.Refresh;
 end;
 
 procedure TOporpunktListFrame.actAddUpdate(Sender: TObject);
@@ -77,7 +79,10 @@ end;
 procedure TOporpunktListFrame.actEditExecute(Sender: TObject);
 begin
   if dbGridOporPunkt.DataSource.DataSet.RecNo>0 then
+  begin
     FormOporPunkt.Show(tblOporPunkt, false);
+    dbGridOporPunkt.DataSource.DataSet.Refresh;
+  end;
 end;
 
 procedure TOporpunktListFrame.dbGridOporPunktDblClick(Sender: TObject);
@@ -89,7 +94,7 @@ begin
   begin
     FormOporPunkt.Show(tblOporPunkt, true);
   end;
-  dbGridOporPunkt.Refresh;
+  dbGridOporPunkt.DataSource.DataSet.Refresh;
 end;
 
 procedure TOporpunktListFrame.open(control: Boolean=False);
@@ -107,6 +112,17 @@ begin
     tblOporPunkt.Filter := 'FK_PLOSHAD_ID='+IntToStr(FormMain.PloshadId);
     tblOporPunkt.Filtered:=True;
     tblOporPunkt.Open;
+  end;
+end;
+
+procedure TOporpunktListFrame.tblOporPunktBeforeOpen(DataSet: TDataSet);
+var
+  i: Integer;
+begin
+  for i:=0 to tblOporPunkt.Fields.Count-1 do
+  begin
+    if tblOporPunkt.Fields[i].DataType = ftFloat then
+      TNumericField (tblOporPunkt.Fields[i]).DisplayFormat:= '#####0.###';
   end;
 end;
 

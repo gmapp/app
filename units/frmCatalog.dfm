@@ -1,7 +1,7 @@
-object FormControl: TFormControl
+object FormCatalog: TFormCatalog
   Left = 0
   Top = 0
-  Caption = #1050#1086#1085#1090#1088#1086#1083#1100
+  Caption = #1050#1072#1090#1072#1083#1086#1075
   ClientHeight = 428
   ClientWidth = 720
   Color = clBtnFace
@@ -14,7 +14,7 @@ object FormControl: TFormControl
   Position = poDesktopCenter
   PixelsPerInch = 96
   TextHeight = 13
-  inline ControlListFrame1: TControlListFrame
+  inline CatalogListFrame1: TCatalogListFrame
     Left = 0
     Top = 0
     Width = 720
@@ -23,10 +23,9 @@ object FormControl: TFormControl
     TabOrder = 0
     ExplicitLeft = -39
     ExplicitTop = 56
-    inherited dbGridReis: TDBGrid
+    inherited dbGridCatalog: TDBGrid
       Width = 720
       Height = 428
-      OnDblClick = nil
     end
   end
 end

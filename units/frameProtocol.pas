@@ -34,6 +34,7 @@ type
     ProgressBar1: TProgressBar;
     linkC: TLinkLabel;
     chbBrack: TDBCheckBox;
+    chbSaveAsOP: TCheckBox;
     procedure DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure DBGrid1ColExit(Sender: TObject);
@@ -47,6 +48,7 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure chbBrackClick(Sender: TObject);
     procedure DBGrid1ColEnter(Sender: TObject);
+    procedure btnSaveClick(Sender: TObject);
   private
     FOporPunk1: TOporPunkt;
     FOporPunk2: TOporPunkt;
@@ -54,7 +56,7 @@ type
     procedure DrawGridCheckBox(Canvas: TCanvas; Rect: TRect; Checked: boolean);
   public
     procedure open(reis: Integer);
-    procedure calc(C: Double);
+    function calc(C: Double): Boolean;
     procedure reset;
     procedure loadGrav(Reis: TReis; Grav: TGravimeter);
   end;
@@ -318,9 +320,35 @@ var
 begin
   C:=FormMain.Grav.c;//0.99992;//1.00027;
   calc(C);
+  btnSave.Enabled:=True;
 end;
 
-procedure TProtocolListFrame.calc(C: Double);
+procedure TProtocolListFrame.btnSaveClick(Sender: TObject);
+var
+  saveAsOP: Boolean;
+begin
+  saveAsOP:=False;
+  if chbSaveAsOP.Checked then
+  begin
+    if (MessageDlg('¬ы действительно хотите сохранить наблюдени€ в опорную сеть?'
+      , mtConfirmation, [mbYes, mbNo], mrNo) = mrYes) then
+    begin
+      saveAsOP:=True;
+    end;
+  end;
+  try
+    if saveAsOP then
+      FormDatabase.calcControlOP(FormMain.PloshadId, FormMain.Reis)
+    else
+      FormDatabase.calcControl(FormMain.PloshadId, FormMain.Reis);
+    ShowMessage(' онтроль пересчитан успешно!');
+  except
+    On E: Exception do
+      OutputDebugString(StringToOleStr(E.Message));
+  end;
+end;
+
+function TProtocolListFrame.calc(C: Double): Boolean;
 var
   ds: TDataSet;
   opZ1, opZ2: Double;
@@ -334,6 +362,7 @@ var
   brack: Integer;
   Key1, Key2: String;
 begin
+  Result:=False;
   dic:=FormDatabase.PunktChecks;
   arr:=dic.ToArray;
 
@@ -419,8 +448,8 @@ begin
       //F:=RoundTo(F, -4);
       //Q:=RoundTo(F/(opS2-opS1), -4);
       Q:=F/(opS2-opS1);
-      lblPunkt.Caption:=FloatToStr(F);
-      lblDrift.Caption:=FloatToStr(Q);
+      lblPunkt.Caption:=FloatToStrF(F, ffNumber, 15, 3);
+      lblDrift.Caption:=FloatToStrF(Q, ffNumber, 15, 3);
       lblc.Caption:=FloatToStr(C);
 
       p:=0;
@@ -453,10 +482,11 @@ begin
         Application.ProcessMessages;
       end;
       ds.First;
+      Result:=True;
     finally
       ds.EnableControls;
     end;
-    FormDatabase.calcControl(FormMain.PloshadId, FormMain.Reis);
+    //FormDatabase.calcControl(FormMain.PloshadId, FormMain.Reis);
   except
     On E: Exception do
       OutputDebugString(StringToOleStr(E.Message));
@@ -482,6 +512,7 @@ begin
   lblC.Caption:=FloatToStr(Grav.c);
   lblDate.Caption:=DateToStr(Reis.date);
   lblOperator.Caption:=Reis.oper;
+  lblDlina.Caption:=TimeToStr(FormDatabase.getReisDuration(reis.id));
 end;
 
 end.

@@ -21,8 +21,10 @@ type
     procedure btnOkClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btnCancelClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     FTable: TZTable;
+    FId: Integer;
   public
     procedure show(tbl: TZTable; create: boolean);
   end;
@@ -34,9 +36,13 @@ implementation
 
 {$R *.dfm}
 
-uses MainUnit;
+uses MainUnit, Database;
 
 procedure TFormOporPunkt.btnOkClick(Sender: TObject);
+var
+  no_pr,no_pk,no_grav: Integer;
+  grav: Double;
+  op_date: TDate;
 begin
   if Length(edProfil.Text)<1 then
   begin
@@ -45,14 +51,12 @@ begin
     Exit;
   end;
 
-  FTable.FieldByName('NO_PR').Value:=edProfil.Text;
-  FTable.FieldByName('NO_PK').Value:=edPiket.Text;
-  FTable.FieldByName('GRAV').Value:=edGnabl.Text;
-  FTable.FieldByName('NO_GRAV').Value:=edPribor.Text;
-  FTable.FieldByName('OP_DATE').Value:=dtDate.Date;
-  FTable.FieldByName('COMMENT').Value:=edComment.Text;
-  FTable.FieldByName('FK_PLOSHAD_ID').Value:=FormMain.PloshadId;
-  FTable.Post;
+  no_pr:=StrToInt(edProfil.Text);
+  no_pk:=StrToInt(edPiket.Text);
+  grav:=StrToFloat(edGnabl.Text);
+  no_grav:=StrToInt(edPribor.Text);
+  op_date:=dtDate.Date;
+  FormDatabase.updateOporPunkt(FId,no_pr,no_pk,grav,no_grav,op_date,edComment.Text,FormMain.PloshadId);
 end;
 
 procedure TFormOporPunkt.btnCancelClick(Sender: TObject);
@@ -65,25 +69,26 @@ begin
   FTable.ReadOnly:=True;
 end;
 
+procedure TFormOporPunkt.FormCreate(Sender: TObject);
+begin
+  FId:=-1;
+end;
+
 procedure TFormOporPunkt.show(tbl: TZTable; create: boolean);
 begin
   Self.FTable:=tbl;
-  FTable.ReadOnly:=False;
-  if not FTable.CanModify then
-    raise Exception.Create('Cant edit table '+FTable.Name);
   if (create) then
   begin
+    FId:=-1;
     edProfil.Text:='';
     edPiket.Text:='';
     edGnabl.Text:='';
     edPribor.Text:='';
     dtDate.Date:=Now();
     edComment.Text:='';
-
-    FTable.Insert();
-    FTable.Edit;
   end else
   begin
+    FId:=FTable.FieldByName('ID').Value;
     edProfil.Text:=VarToStr(FTable.FieldByName('NO_PR').Value);
     edPiket.Text:=VarToStr(FTable.FieldByName('NO_PK').Value);
     edGnabl.Text:=VarToStr(FTable.FieldByName('GRAV').Value);
@@ -93,7 +98,6 @@ begin
     else
       dtDate.Date:=VarToDateTime(FTable.FieldByName('OP_DATE').Value);
     edComment.Text:=VarToStr(FTable.FieldByName('COMMENT').Value);
-    FTable.Edit;
   end;
   showModal;
 end;

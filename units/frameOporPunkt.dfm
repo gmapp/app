@@ -105,7 +105,7 @@ object OporpunktListFrame: TOporpunktListFrame
       end
       item
         Expanded = False
-        FieldName = 'Gsredn'
+        FieldName = 'GSREDN'
         Title.Caption = 'G'#1089#1088#1077#1076#1085
         Visible = True
       end
@@ -172,7 +172,7 @@ object OporpunktListFrame: TOporpunktListFrame
       item
         Expanded = False
         FieldName = 'OTKL2'
-        Title.Caption = #1086#1082#1090#1083'^2'
+        Title.Caption = #1086#1090#1082#1083'^2'
         Visible = True
       end
       item
@@ -183,26 +183,29 @@ object OporpunktListFrame: TOporpunktListFrame
       end
       item
         Expanded = False
-        FieldName = 'Gsredn'
+        FieldName = 'GSREDN'
         Title.Caption = 'G'#1089#1088#1077#1076#1085
         Visible = True
       end
       item
         Expanded = False
         FieldName = 'SKP'
-        Title.Caption = #1057#1050#1055' '#1087#1091#1085#1082#1090#1072
+        Title.Caption = #1057#1050#1056' '#1087#1091#1085#1082#1090#1072
         Visible = True
       end
       item
         Expanded = False
         FieldName = 'COMMENT'
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
+        Width = 100
         Visible = True
       end>
   end
   object tblOporPunkt: TZTable
     Connection = FormDatabase.ZConnection1
-    TableName = 'OPOR_PUNKT'
+    BeforeOpen = tblOporPunktBeforeOpen
+    ReadOnly = True
+    TableName = 'VIEW_OPOR_PUNKT'
     Left = 376
     Top = 88
     object tblOporPunktID: TIntegerField
@@ -231,28 +234,20 @@ object OporpunktListFrame: TOporpunktListFrame
       FieldName = 'COMMENT'
       Size = 1024
     end
-    object tblOporPunktOTKL2: TFloatField
-      FieldKind = fkCalculated
-      FieldName = 'OTKL2'
-      Calculated = True
-    end
-    object tblOporPunktKRATN: TFloatField
-      FieldKind = fkCalculated
-      FieldName = 'KRATN'
-      Calculated = True
-    end
-    object tblOporPunktGsredn: TFloatField
-      FieldKind = fkCalculated
-      FieldName = 'Gsredn'
-      Calculated = True
-    end
-    object tblOporPunktSKP: TFloatField
-      FieldKind = fkCalculated
-      FieldName = 'SKP'
-      Calculated = True
-    end
     object tblOporPunktFK_PLOSHAD_ID: TIntegerField
       FieldName = 'FK_PLOSHAD_ID'
+    end
+    object tblOporPunktOTKL2: TFloatField
+      FieldName = 'OTKL2'
+    end
+    object tblOporPunktKRATN: TIntegerField
+      FieldName = 'KRATN'
+    end
+    object tblOporPunktGSREDN: TFloatField
+      FieldName = 'GSREDN'
+    end
+    object tblOporPunktSKP: TFloatField
+      FieldName = 'SKP'
     end
   end
   object dsOporPunkt: TDataSource

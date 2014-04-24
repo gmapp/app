@@ -62,6 +62,14 @@ type
     ZTableProtocolFK_REIS: TIntegerField;
     ZTableProtocolBRACK: TSmallintField;
     ZTableProtocolBRACK_CALC: TBooleanField;
+    dsTopograph: TZTable;
+    dsTopographID: TIntegerField;
+    dsTopographNO_PR: TIntegerField;
+    dsTopographNO_PK: TIntegerField;
+    dsTopographX: TFloatField;
+    dsTopographY: TFloatField;
+    dsTopographH: TFloatField;
+    dsTopographFK_PLOSHAD_ID: TIntegerField;
     procedure FormCreate(Sender: TObject);
     procedure ZConnection1BeforeConnect(Sender: TObject);
     procedure ZTableProtocolCalcFields(DataSet: TDataSet);
@@ -78,6 +86,7 @@ type
       const Text: string);
     procedure ZTableProtocolBRACK_CALCGetText(Sender: TField; var Text: string;
       DisplayText: Boolean);
+    procedure ZTableProtocolBeforeOpen(DataSet: TDataSet);
   private
     FPunktChecks :TDictionary<String, Boolean>;
 
@@ -87,6 +96,8 @@ type
 
     function insertProtocolRecord(reis: Integer; d: TDate; list:TStringList): boolean;
     function insertReisRecord(aOperator, aFile: String; aDateIzmerenia: TDate; aNumPribora, aPloshad: Integer): Integer;
+    function insertTopographRecord(ploshadId: Integer; list:TStringList): boolean;
+    function removeTopographRecord(NO_PR,NO_PK,ploshadId: Integer): boolean;
 
     procedure setPunktCheck(check: Boolean);
     function clearProtocol(reis: Integer): Boolean;
@@ -96,6 +107,8 @@ type
 
     function getOporPunkt(pr,pk,ploshad_id: Integer; var op: TOporPunkt): Boolean;
     function getOporPunktByProtocol(protocolId: String; ploshad_id: Integer; var op: TOporPunkt): Boolean;
+    function updateOporPunkt(id,no_pr,no_pk: Integer;grav: Double; no_grav: Integer;
+      op_date: TDate;comment: String;ploshad_id: Integer): Boolean;
     function getReis(id: Integer; var reis: TReis; ploshad_id: Integer): Boolean;
 
     function getGravimeter(num: Integer; ploshad_id: Integer; var grav: TGravimeter): Boolean;
@@ -103,7 +116,19 @@ type
 
     property PunktChecks:TDictionary<String, Boolean> read FPunktChecks;
 
-    procedure calcControl(ploshadId: Integer; reis: TReis);
+    procedure calcControl(ploshadId: Integer; reis: TReis; isOP: Boolean=False);
+    procedure calcControlOP(ploshadId: Integer; reis: TReis);
+    function updateControlComment(id: Integer; value: String): Boolean;
+    procedure calcAllControl(ploshadId: Integer);
+
+    function backup(dest: String): Boolean;
+    function restore(dest: String): Boolean;
+
+    procedure removeFrom(tbl, idField: String; id: Integer);
+
+    procedure clearTopograph(ploshadId: Integer);
+    procedure removeReis(Id: Integer);
+    function getReisDuration(Id: Integer): TDateTime;
   end;
 
 var
@@ -198,6 +223,17 @@ end;
 procedure TFormDatabase.ZConnection1BeforeConnect(Sender: TObject);
 begin
   OutputDebugString(StringToOleStr('ZConnection1BeforeConnect'));
+end;
+
+procedure TFormDatabase.ZTableProtocolBeforeOpen(DataSet: TDataSet);
+var
+  i: Integer;
+begin
+  for i:=0 to ZTableProtocol.Fields.Count-1 do
+  begin
+    if ZTableProtocol.Fields[i].DataType = ftFloat then
+      TNumericField (ZTableProtocol.Fields[i]).DisplayFormat:= '#####0.###';
+  end;
 end;
 
 procedure TFormDatabase.ZTableProtocolBRACK_CALCChange(Sender: TField);
@@ -621,55 +657,274 @@ begin
   Result:=ZQuery.Fields[0].Value;
 end;
 
-procedure TFormDatabase.calcControl(ploshadId: Integer; reis: TReis);
+procedure TFormDatabase.calcAllControl(ploshadId: Integer);
+var
+  reis: TReis;
+begin
+  calcControl(ploshadId, reis);
+end;
+
+procedure TFormDatabase.calcControl(ploshadId: Integer; reis: TReis; isOP: Boolean=False);
 var
   sql: String;
   ZQuery: TZQuery;
   ok: Boolean;
+  tbl: String;
 begin
   ZQuery:=ZQuery1;
 
-  sql:='delete from control where FK_PLOSHAD_ID=:FK_PLOSHAD_ID and NO_GRAV=:NO_GRAV';
+  if isOP then tbl:='control_op'
+  else tbl:='control';
+
+  sql:='delete from '+tbl+' where FK_PLOSHAD_ID=:FK_PLOSHAD_ID AND FK_REIS_ID=:FK_REIS_ID';
   ZQuery.SQL.Clear;
   ZQuery.SQL.Add(sql);
   ZQuery.ParamByName('FK_PLOSHAD_ID').AsInteger:=ploshadId;
-  ZQuery.ParamByName('NO_GRAV').AsInteger:=reis.num;
+  ZQuery.ParamByName('FK_REIS_ID').AsInteger:=reis.id;
   ZQuery.ExecSQL;
   ok:=ZQuery.UpdatesPending;
 
-  sql:='insert into control(no_pr,no_pk,gsredn,kratn,no_grav,fk_ploshad_id,grav,op_date)'
-  +' select t.no_pr,t.no_pk,t.gsredn,t.kratn,r.NOMER_PRIBORA,r.fk_ploshad_id,'
-  +' (select grav from opor_punkt op where op.fk_ploshad_id=r.fk_ploshad_id'
-  +' and op.no_pr=t.no_pr and op.no_pk=t.no_pk) as grav, r.date_izmerenia'
-  +' from ('
-      +' SELECT line as no_pr,station as no_pk,sum(g)/count(1) as gsredn,count(1) as kratn,fk_reis'
-      +' FROM PROTOCOL p'
-      +' where fk_reis=:FK_REIS and (brack is null or brack<>1)'
-      +' group by line,station,fk_reis'
-      +' order by line,station'
-  +' ) as t ,reis r'
-  +' where t.FK_REIS=r.id';
+  sql:='insert into '+tbl+'(no_pr,no_pk,no_grav,fk_ploshad_id,grav,op_date,fk_reis_id)'
+    +' SELECT line as no_pr,station as no_pk,r.NOMER_PRIBORA,r.fk_ploshad_id,g as grav, r.date_izmerenia,r.id as fk_reis'
+    +' FROM PROTOCOL p, reis r'
+    +' where (brack is null or brack<>1) and p.FK_REIS=r.id and r.FK_PLOSHAD_ID=:FK_PLOSHAD_ID AND p.FK_REIS=:FK_REIS_ID'
+    +' order by line,station';
 
-  ZQuery.SQL.Clear;
-  ZQuery.SQL.Add(sql);
-  ZQuery.ParamByName('FK_REIS').AsInteger:=reis.id;
-  ZQuery.ExecSQL;
-
-  sql:='update control set otkl2=power((GSREDN-GRAV), 2) where FK_PLOSHAD_ID=:FK_PLOSHAD_ID and NO_GRAV=:NO_GRAV';
   ZQuery.SQL.Clear;
   ZQuery.SQL.Add(sql);
   ZQuery.ParamByName('FK_PLOSHAD_ID').AsInteger:=ploshadId;
-  ZQuery.ParamByName('NO_GRAV').AsInteger:=reis.num;
+  ZQuery.ParamByName('FK_REIS_ID').AsInteger:=reis.id;
+  ZQuery.ExecSQL;
+
+  sql:='update '+tbl+' set control=1'
+    +' where id in (SELECT min(id) as id from '+tbl+' '
+      +' WHERE FK_PLOSHAD_ID=:FK_PLOSHAD_ID group by no_pr,no_pk)';
+  ZQuery.SQL.Clear;
+  ZQuery.SQL.Add(sql);
+  ZQuery.ParamByName('FK_PLOSHAD_ID').AsInteger:=ploshadId;
+  ZQuery.ExecSQL;
+
+  sql:='update '+tbl+' as c1 set'
+    +' gsredn=(select sum(grav)/count(1) FROM '+tbl+' c2'
+      +' WHERE c1.no_pr=c2.no_pr and c1.no_pk=c2.no_pk and c1.FK_PLOSHAD_ID=c2.FK_PLOSHAD_ID)'
+    +' where c1.FK_PLOSHAD_ID=:FK_PLOSHAD_ID';
+  ZQuery.SQL.Clear;
+  ZQuery.SQL.Add(sql);
+  ZQuery.ParamByName('FK_PLOSHAD_ID').AsInteger:=ploshadId;
+  ZQuery.ExecSQL;
+
+    sql:='update '+tbl+' as c1 set'
+      +' kratn=(select count(1) FROM '+tbl+' c2'
+      +' WHERE c1.no_pr=c2.no_pr and c1.no_pk=c2.no_pk and c1.FK_PLOSHAD_ID=c2.FK_PLOSHAD_ID)'
+    +' where c1.control=1'
+    +' and c1.FK_PLOSHAD_ID=:FK_PLOSHAD_ID';
+  ZQuery.SQL.Clear;
+  ZQuery.SQL.Add(sql);
+  ZQuery.ParamByName('FK_PLOSHAD_ID').AsInteger:=ploshadId;
+  ZQuery.ExecSQL;
+
+  sql:='update '+tbl+' set otkl2=power((GSREDN-GRAV), 2) where FK_PLOSHAD_ID=:FK_PLOSHAD_ID';
+  ZQuery.SQL.Clear;
+  ZQuery.SQL.Add(sql);
+  ZQuery.ParamByName('FK_PLOSHAD_ID').AsInteger:=ploshadId;
   ZQuery.ExecSQL;
 
   //SQRT((сумма откл^2)/(кратность*(кратность-1)))
-  sql:='update control set skp=sqrt(otkl2/(kratn*(kratn-1))) '
-    +' where FK_PLOSHAD_ID=:FK_PLOSHAD_ID and NO_GRAV=:NO_GRAV and kratn>1';
+  sql:='update '+tbl+' as c1 set skp=sqrt('
+    +'(select sum(otkl2) FROM '+tbl+' c2'
+      +' WHERE c1.no_pr=c2.no_pr and c1.no_pk=c2.no_pk and c1.FK_PLOSHAD_ID=c2.FK_PLOSHAD_ID)'
+    +'/(kratn*(kratn-1))) '
+    +' where FK_PLOSHAD_ID=:FK_PLOSHAD_ID and kratn>1';
   ZQuery.SQL.Clear;
   ZQuery.SQL.Add(sql);
   ZQuery.ParamByName('FK_PLOSHAD_ID').AsInteger:=ploshadId;
-  ZQuery.ParamByName('NO_GRAV').AsInteger:=reis.num;
   ZQuery.ExecSQL;
+end;
+
+procedure TFormDatabase.calcControlOP(ploshadId: Integer; reis: TReis);
+begin
+  calcControl(ploshadId, reis, true);
+end;
+
+function TFormDatabase.updateControlComment(id: Integer; value: String): Boolean;
+var
+  ZQuery: TZQuery;
+begin
+  ZQuery:=ZQuery1;
+  ZQuery.SQL.Clear;
+  ZQuery.SQL.Add('update control set comment=:comment where id=:id');
+  ZQuery.ParamByName('comment').AsString:=value;
+  ZQuery.ParamByName('id').AsInteger:=id;
+  ZQuery.ExecSQL;
+  Result:=ZQuery.UpdatesPending;
+end;
+
+function TFormDatabase.backup(dest: String): Boolean;
+var
+  ZQuery: TZQuery;
+begin
+  ZQuery:=ZQuery1;
+  ZQuery.SQL.Clear;
+  ZQuery.SQL.Text:='BACKUP TABLE protocol TO '''+dest+'''';
+  ZQuery.ExecSQL;
+  ZQuery.Close;
+  ZQuery.SQL.Clear;
+  ZQuery.SQL.Text:=' protocol TO '''+dest+'''';
+  ZQuery.ExecSQL;
+  ShowMessage('Backup successful complete.');
+end;
+
+function TFormDatabase.restore(dest: String): Boolean;
+begin
+  Result:=False;
+
+end;
+
+procedure TFormDatabase.clearTopograph(ploshadId: Integer);
+var
+  sql: String;
+  ZQuery: TZQuery;
+begin
+  ZQuery:=ZQuery1;
+
+  sql:='delete from topograph where FK_PLOSHAD_ID=:FK_PLOSHAD_ID';
+  ZQuery.SQL.Clear;
+  ZQuery.SQL.Add(sql);
+  ZQuery.ParamByName('FK_PLOSHAD_ID').AsInteger:=ploshadId;
+  ZQuery.ExecSQL;
+end;
+
+function TFormDatabase.removeTopographRecord(NO_PR,NO_PK,ploshadId: Integer): boolean;
+var
+  sql: String;
+  ZQuery: TZQuery;
+begin
+  Result:=False;
+
+  sql:='delete FROM topograph a where NO_PR=:NO_PR AND NO_PK=:NO_PK AND FK_PLOSHAD_ID=:FK_PLOSHAD_ID';
+
+  ZQuery:=ZQuery1;
+  ZQuery.SQL.Clear;
+  ZQuery.SQL.Add(sql);
+
+  ZQuery.ParamByName('NO_PR').AsInteger := NO_PR;
+  ZQuery.ParamByName('NO_PK').AsInteger := NO_PK;
+  ZQuery.ParamByName('FK_PLOSHAD_ID').AsInteger := ploshadId;
+
+  ZQuery.ExecSQL;
+  Result:=ZQuery.UpdatesPending;
+  ZQuery.Close;
+end;
+
+function TFormDatabase.insertTopographRecord(ploshadId: Integer; list:TStringList): boolean;
+var
+  sql: String;
+  ZQuery: TZQuery;
+  NO_PR,NO_PK: Integer;
+begin
+  NO_PR:=StrToInt(list[0]);
+  NO_PK:=StrToInt(list[1]);
+
+  removeTopographRecord(NO_PR,NO_PK,ploshadId);
+
+  Result:=False;
+  sql:='insert into topograph(NO_PR, NO_PK, X, Y, H, FK_PLOSHAD_ID)'
+    + ' values(:NO_PR, :NO_PK, :X, :Y, :H, :FK_PLOSHAD_ID)'
+    + ' returning ID;';
+
+  ZQuery:=ZQuery1;
+  ZQuery.SQL.Clear;
+  ZQuery.SQL.Add(sql);
+
+  ZQuery.ParamByName('NO_PR').AsInteger := NO_PR;
+  ZQuery.ParamByName('NO_PK').AsInteger := NO_PK;
+  ZQuery.ParamByName('X').AsFloat := StrToFloat(list[2]);
+  ZQuery.ParamByName('Y').AsFloat := StrToFloat(list[3]);
+  ZQuery.ParamByName('H').AsFloat := StrToFloat(list[4]);
+  ZQuery.ParamByName('FK_PLOSHAD_ID').AsInteger := ploshadId;
+
+  ZQuery.ExecSQL;
+  Result:=ZQuery.UpdatesPending;
+  ZQuery.Close;
+end;
+
+procedure TFormDatabase.removeFrom(tbl, idField: String; id: Integer);
+var
+  sql: String;
+  ZQuery: TZQuery;
+begin
+  ZQuery:=ZQuery1;
+
+  sql:='delete FROM '+tbl+' where '+idField+'=:ID';
+  ZQuery.SQL.Clear;
+  ZQuery.SQL.Add(sql);
+  ZQuery.ParamByName('ID').AsInteger:=id;
+  ZQuery.ExecSQL;
+end;
+
+procedure TFormDatabase.removeReis(Id: Integer);
+begin
+  removeFrom('control', 'fk_reis_id', Id);
+  removeFrom('control_op', 'fk_reis_id', Id);
+  removeFrom('protocol', 'fk_reis', Id);
+  removeFrom('REIS', 'id', Id);
+end;
+
+function TFormDatabase.updateOporPunkt(id,no_pr,no_pk: Integer;grav: Double; no_grav: Integer;
+  op_date: TDate;comment: String;ploshad_id: Integer): Boolean;
+var
+  sql: String;
+  ZQuery: TZQuery;
+begin
+  ZQuery:=ZQuery1;
+
+  if id>0 then sql:='update OPOR_PUNKT set no_pr=:NO_PR,no_pk=:NO_PK,grav=:GRAV,no_grav=:NO_GRAV'
+    +',op_date=:OP_DATE,comment=:COMMENT where id=:ID'
+  else sql:='insert into OPOR_PUNKT(no_pr,no_pk,grav,no_grav,op_date,comment,FK_PLOSHAD_ID)'
+    +' VALUES(:NO_PR,:NO_PK,:GRAV,:NO_GRAV,:OP_DATE,:COMMENT,:FK_PLOSHAD_ID)';
+
+  ZQuery.SQL.Clear;
+  ZQuery.SQL.Add(sql);
+  ZQuery.ParamByName('NO_PR').AsInteger:=no_pr;
+  ZQuery.ParamByName('NO_PK').AsInteger:=no_pk;
+  ZQuery.ParamByName('GRAV').AsFloat:=grav;
+  ZQuery.ParamByName('NO_GRAV').AsInteger:=no_grav;
+  ZQuery.ParamByName('OP_DATE').AsDate:=op_date;
+  ZQuery.ParamByName('COMMENT').AsString:=comment;
+  if id>0 then ZQuery.ParamByName('ID').AsInteger:=Id
+  else ZQuery.ParamByName('FK_PLOSHAD_ID').AsInteger:=ploshad_id;
+  ZQuery.ExecSQL;
+  Result:=ZQuery.UpdatesPending;
+  ZQuery.Close;
+end;
+
+function TFormDatabase.getReisDuration(Id: Integer): TDateTime;
+var
+  sql: String;
+  ZQuery: TZQuery;
+  i, rows: Integer;
+  d: Double;
+begin
+  Result:=0;
+
+  sql:='select (max(DEC_TIME)-min(DEC_TIME)) as duration from protocol where fk_reis=:FK_REIS_ID';
+  ZQuery:=ZQuery1;
+  ZQuery.SQL.Clear;
+  ZQuery.SQL.Add(sql);
+
+	ZQuery.ParamByName('FK_REIS_ID').AsInteger := Id;
+
+  ZQuery.Open;
+  rows:=ZQuery.RecordCount;
+
+  if rows>0 then
+  begin
+    ZQuery.First;
+    d:=ZQuery.FieldByName('duration').AsFloat;
+    Result:=FloatToDateTime(d);
+  end;
+
+  ZQuery.Close;
 end;
 
 end.

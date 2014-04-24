@@ -21,7 +21,6 @@ object FormDatabase: TFormDatabase
     Catalog = ''
     Properties.Strings = (
       'codepage=WIN1251')
-    Connected = True
     BeforeConnect = ZConnection1BeforeConnect
     HostName = ''
     Port = 0
@@ -42,6 +41,7 @@ object FormDatabase: TFormDatabase
   object ZTableProtocol: TZTable
     Connection = ZConnection1
     SortedFields = 'ID'
+    BeforeOpen = ZTableProtocolBeforeOpen
     OnCalcFields = ZTableProtocolCalcFields
     TableName = 'PROTOCOL'
     IndexFieldNames = 'ID Asc'
@@ -131,6 +131,39 @@ object FormDatabase: TFormDatabase
       OnGetText = ZTableProtocolBRACK_CALCGetText
       OnSetText = ZTableProtocolBRACK_CALCSetText
       Calculated = True
+    end
+  end
+  object dsTopograph: TZTable
+    Connection = ZConnection1
+    SortedFields = 'ID'
+    BeforeOpen = ZTableProtocolBeforeOpen
+    OnCalcFields = ZTableProtocolCalcFields
+    TableName = 'TOPOGRAPH'
+    IndexFieldNames = 'ID Asc'
+    Left = 224
+    Top = 128
+    object dsTopographID: TIntegerField
+      FieldName = 'ID'
+      Required = True
+    end
+    object dsTopographNO_PR: TIntegerField
+      FieldName = 'NO_PR'
+    end
+    object dsTopographNO_PK: TIntegerField
+      FieldName = 'NO_PK'
+    end
+    object dsTopographX: TFloatField
+      FieldName = 'X'
+    end
+    object dsTopographY: TFloatField
+      FieldName = 'Y'
+    end
+    object dsTopographH: TFloatField
+      FieldName = 'H'
+    end
+    object dsTopographFK_PLOSHAD_ID: TIntegerField
+      FieldName = 'FK_PLOSHAD_ID'
+      Required = True
     end
   end
 end

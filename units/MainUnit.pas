@@ -52,6 +52,14 @@ type
     linkReis: TLinkLabel;
     ReisFrame1: TReisListFrame;
     actControl: TAction;
+    actCatalog: TAction;
+    actBackup: TAction;
+    actImportTopograph: TAction;
+    OpenDialog1: TOpenDialog;
+    actControlOpor: TAction;
+    N19: TMenuItem;
+    N20: TMenuItem;
+    actStat: TAction;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure N9Click(Sender: TObject);
@@ -69,6 +77,13 @@ type
       LinkType: TSysLinkType);
     procedure actOporPunktAddExecute(Sender: TObject);
     procedure actControlExecute(Sender: TObject);
+    procedure actCatalogUpdate(Sender: TObject);
+    procedure actCatalogExecute(Sender: TObject);
+    procedure actBackupExecute(Sender: TObject);
+    procedure actImportTopographUpdate(Sender: TObject);
+    procedure actImportTopographExecute(Sender: TObject);
+    procedure actControlOporExecute(Sender: TObject);
+    procedure actStatExecute(Sender: TObject);
   private
     FPloshadId: Integer;
     FPloshad: String;
@@ -76,6 +91,8 @@ type
     FGrav: TGravimeter;
     //FOporPunk1: TOporPunkt;
     //FOporPunk2: TOporPunkt;
+
+    FInitialDir: String;
 
     procedure switchFrame(showProtocol: Boolean);
 
@@ -95,6 +112,8 @@ type
     function StringToDate(str: String): TDate;
 
     procedure log(msg: String);
+
+    procedure importTopograph(filename: String);
   end;
 
 var
@@ -105,7 +124,7 @@ implementation
 {$R *.dfm}
 
 uses dlgPloshad,System.StrUtils, System.DateUtils, frmProtocol, dlgGravimeter, frmPloshad,
-  frmControl, frmGravimeter;
+  frmControl, frmGravimeter, frmCatalog, frmStatistics;
 
 procedure TFormMain.log(msg: String);
 begin
@@ -160,15 +179,138 @@ begin
   end;
 end;
 
+procedure TFormMain.actBackupExecute(Sender: TObject);
+begin
+  //FormDatabase.backup('/backups');
+end;
+
+procedure TFormMain.actCatalogExecute(Sender: TObject);
+begin
+  FormCatalog.open;
+end;
+
+procedure TFormMain.actCatalogUpdate(Sender: TObject);
+begin
+  (Sender as TAction).Enabled:=FPloshad<>'';
+end;
+
 procedure TFormMain.actControlExecute(Sender: TObject);
 begin
   FormControl.Open;
+end;
+
+procedure TFormMain.actControlOporExecute(Sender: TObject);
+begin
+  FormControl.Open(True);
 end;
 
 procedure TFormMain.actGravimeterExecute(Sender: TObject);
 begin
   FormGravimeterList.open;
   //FormGravimeter.open;
+end;
+
+procedure TFormMain.actImportTopographExecute(Sender: TObject);
+begin
+  OpenDialog1.Filter:='txt-files|*.txt|All Files|*.*';
+  OpenDialog1.FilterIndex := 1;
+  if FInitialDir='' then
+    FInitialDir:=ExtractFilePath(Application.ExeName);
+  OpenDialog1.InitialDir:=FInitialDir;
+  if OpenDialog1.Execute then
+  begin
+    if FileExists(OpenDialog1.FileName) then
+    begin
+      importTopograph(OpenDialog1.FileName);
+    end else
+     raise Exception.Create('Файл не существует '+OpenDialog1.FileName);
+  end;
+end;
+
+procedure TFormMain.importTopograph(filename: String);
+var
+  myFile : TextFile;
+  text, tmp : string;
+  pwc: PWideChar;
+  arr: array of TVarRec;
+  list:TStringList;
+  i, amount, p, amountSkip: Integer;
+  ds: TZTable;
+begin
+  AssignFile(myFile, filename);
+  Reset(myFile);
+  list := TStringList.create;
+  list.StrictDelimiter := false;
+  list.Delimiter := #9; //TAB
+  amount:=0;
+  amountSkip:=0;
+  try
+    ds:=FormDatabase.dsTopograph;
+    ds.Active:=True;
+    ds.DisableControls;
+    try
+      FormDatabase.clearTopograph(FPloshadId);
+      ds.Refresh;
+    finally
+      ds.EnableControls
+    end;
+
+    ds.DisableControls;
+    try
+      while not Eof(myFile) do
+      begin
+        ReadLn(myFile, text);
+
+        if (Length(text)>0) AND Not AnsiStartsStr('/', text) then
+        begin
+          log((text));
+          try
+            text:=ReplaceStr(text,'.',',');
+
+            list.DelimitedText:=text;
+
+            if list.Count<5 then
+            begin
+              log(('ignore short line '+text));
+              continue;
+            end;
+            if list[2]='X' then
+              continue;
+
+            Setlength(arr, list.Count+1);
+            arr[0].VInteger:=0;
+            for i := 0 to list.Count-1 do
+              arr[i+1].VAnsiString:=PAnsiString(list[i]);
+            FormDatabase.insertTopographRecord(FPloshadId, list);
+            INC(amount);
+          except
+            on E:Exception do
+              begin
+                log('Error '+E.Message+' on process line '+text)
+              end;
+          end;
+          Application.ProcessMessages;
+        end;
+        //FormDatabase.ZTableProtocol.ApplyUpdates;
+      end;
+    finally
+      ds.EnableControls
+    end;
+    ds.First;
+    ds.Refresh;
+    if (amount<1) then
+      ShowMessage('Ошибка! Данных на указаную дату не найдено.')
+    else
+      ShowMessage('Загрузка выполнена: '+IntToStr(amount)+' (из '+IntToStr(amountSkip)+')');
+  finally
+    CloseFile(myFile);
+    FreeAndNil(list);
+  end;
+end;
+
+procedure TFormMain.actImportTopographUpdate(Sender: TObject);
+begin
+  (Sender as TAction).Enabled:=FPloshad<>'';
 end;
 
 procedure TFormMain.actOporPunktAddExecute(Sender: TObject);
@@ -213,6 +355,11 @@ begin
   ReisFrame1.Visible:=True;
   ReisFrame1.BringToFront;
   ReisFrame1.add;
+end;
+
+procedure TFormMain.actStatExecute(Sender: TObject);
+begin
+  FormStatistics.open;
 end;
 
 procedure TFormMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);

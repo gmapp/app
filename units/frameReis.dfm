@@ -108,9 +108,11 @@ object ReisListFrame: TReisListFrame
     object actEdit: TAction
       Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100
       OnExecute = actEditExecute
+      OnUpdate = actEditUpdate
     end
     object actDelete: TAction
       Caption = #1059#1076#1072#1083#1080#1090#1100
+      OnExecute = actDeleteExecute
       OnUpdate = actDeleteUpdate
     end
     object actAdd: TAction

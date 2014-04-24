@@ -13,6 +13,7 @@ object FormOporPunkt: TFormOporPunkt
   OldCreateOrder = False
   Position = poMainFormCenter
   OnClose = FormClose
+  OnCreate = FormCreate
   DesignSize = (
     303
     234)
